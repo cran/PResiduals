@@ -1,0 +1,25 @@
+\docType{package}
+\name{PResiduals-package}
+\alias{PResiduals}
+\alias{PResiduals-package}
+\title{Computes probability scale residuals and residual correlations.}
+\description{
+  This package outputs probability scale residuals from
+  multiple models and computes residual correlation.
+  Probability scale residual can be computed for
+  continuous, ordinal, binary, count, and time-to-event
+  data (although the current implementation is only for
+  ordinal variables). Plots of probability scale residuals
+  can be useful for model diagnostics.  Residual
+  correlation can be used to test for conditional
+  independence between multiple types of variables.
+}
+\author{
+  Bryan Shepherd \email{bryan.shepherd@vanderbilt.edu}
+
+  Chun Li \email{chun.li@vanderbilt.edu}
+
+  Charles Dupont \email{dupontct@vanderbilt.edu}
+}
+\keyword{package}
+

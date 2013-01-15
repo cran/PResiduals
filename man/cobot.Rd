@@ -1,0 +1,96 @@
+\name{cobot}
+\alias{cobot}
+\title{Conditional ordinal by ordinal tests for association.}
+\usage{
+  cobot(formula,
+    link = c("logit", "probit", "cloglog", "cauchit"),
+    link.x = link, link.y = link, data, subset)
+}
+\arguments{
+  \item{formula}{an object of class \code{\link{Formula}}
+  (or one that can be coerced to that class): a symbolic
+  description of the model to be fitted.  The details of
+  model specification are given under \sQuote{Details}.}
+
+  \item{link}{The link family to be used for ordinal models
+  of both \var{X} and \var{Y}.  Defaults to \samp{logit}.
+  Other options are \samp{probit}, \samp{cloglog}, and
+  \samp{cauchit}.}
+
+  \item{link.x}{The link function to be used for a model of
+  the first ordered variable. Defaults to value of
+  \code{link}.}
+
+  \item{link.y}{The link function to be used for a model of
+  the second variable. Defaults to value of \code{link}.}
+
+  \item{data}{an optional data frame, list or environment
+  (or object coercible by \code{\link{as.data.frame}} to a
+  data frame) containing the variables in the model.  If
+  not found in \code{data}, the variables are taken from
+  \code{environment(formula)}, typically the environment
+  from which \code{cobot} is called.}
+
+  \item{subset}{an optional vector specifying a subset of
+  observations to be used in the fitting process.}
+}
+\value{
+  object of \samp{cobot} class.
+}
+\description{
+  \code{cobot} tests for independence between two ordered
+  categorical variables, \var{X} and \var{Y} conditional on
+  other variables, \var{Z}.  The basic approach involves
+  fitting models of \var{X} on \var{Z} and \var{Y} on
+  \var{Z} and determining whether there is any remaining
+  information between \var{X} and \var{Y}.  This is done by
+  computing one of 3 test statistics.  \code{T1} compares
+  empirical distribution of \var{X} and \var{Y} with the
+  joint fitted distribution of \var{X} and \var{Y} under
+  independence conditional on \var{Z}. \code{T2} computes
+  the correlation between ordinal (probability scale)
+  residuals from both models and tests the null of no
+  residual correlation.  \code{T3} evaluates the
+  concordance--disconcordance of data drawn from the joint
+  fitted distribution of \var{X} and \var{Y} under
+  conditional independence with the empirical distribution.
+  Details are given in \cite{Li C and Shepherd BE, Test of
+  association between two ordinal variables while adjusting
+  for covariates. Journal of the American Statistical
+  Association 2010, 105:612-620}.
+}
+\details{
+  formula is specified as \code{\var{X} | \var{Y} ~
+  \var{Z}}. This indicates that models of \code{\var{X} ~
+  \var{Z}} and \code{\var{Y} ~ \var{Z}} will be fit.  The
+  null hypothsis to be tested is \eqn{H_0 : X}{H0 : X}
+  independant of \var{Y} conditional on \var{Z}.
+
+  Note that \code{T2} can be thought of as an adjust rank
+  correlation.(\cite{Li C and Shepherd BE, A new residual
+  for ordinal outcomes. Biometrika 2012; 99:473-480})
+}
+\examples{
+data(PResidData)
+cobot(x|y~z, data=PResidData)
+}
+\author{
+  Charles Dupont \email{charles.dupont@vanderbilt.edu}
+
+  Chun Li \email{chun.li@vanderbilt.edu}
+
+  Bryan Shepherd \email{bryan.shepherd@vanderbilt.edu}
+}
+\references{
+  Li C and Shepherd BE, Test of association between two
+  ordinal variables while adjusting for covariates. Journal
+  of the American Statistical Association 2010,
+  105:612-620.
+
+  Li C and Shepherd BE, A new residual for ordinal
+  outcomes. Biometrika 2012; 99:473-480
+}
+\seealso{
+  \code{\link{Formula}}, \code{\link{as.data.frame}}
+}
+

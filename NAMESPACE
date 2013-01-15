@@ -1,0 +1,5 @@
+export(cobot)
+export(diagn)
+export(GKGamma)
+import(Formula)
+S3method(print,cobot)

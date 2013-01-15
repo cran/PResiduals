@@ -1,0 +1,16 @@
+a36e23bcbb23ad3825b8d229ad32167c *DESCRIPTION
+0e2c0849d0b2821726b5d4672f085831 *NAMESPACE
+57a3e2bef5c3838445e73e350e823e01 *R/GKGamma.R
+dd9b0dc23fb1f6d53788a76e932a01ee *R/PResiduals-package.R
+db12a1b9dfe0e9b3f3fb9cffaa7dd7c0 *R/cobot.R
+06b0e8253301b6b35bf5487760b8e372 *R/diagn.R
+d2fc4850323fcaee20f76721d1f8b4a8 *R/newPolr.R
+4a817f758928f2c1aed7720435078d77 *R/pgumbel.R
+34df2f683dede4b13375e410ca5d2dc2 *R/print.cobot.R
+efa76ab7f73bc3ac3063e63d6f72a298 *data/PResidData.rda
+b2a432991d848afa226e9dc66ffd51cb *man/GKGamma.Rd
+c1465174b004dbcc61b7afcdd9df44e8 *man/PResidData.Rd
+f10c26aa32134f17230937c3475d99d8 *man/PResiduals-package.Rd
+38e87036a2967f21b768a0269d9682c0 *man/cobot.Rd
+d5df1d6ee2fe72830ca0d14e54c626b9 *man/diagn.Rd
+acbc650d10af51b3bde0a0df710816eb *man/print.cobot.Rd
