@@ -14,30 +14,17 @@
 #' @author Chun Li
 
 GKGamma <- function(M) {
-  nrow <- nrow(M)
-  row <- row(M)
-  ncol <- ncol(M)
-  col <- col(M)
-
-  calc_scon <- function(i, j, M, row, col) {
-    M[i,j] * sum(M[row > i & col > j])
-  }
-  calc_sdis <- function(i, j, M, row, col) {
-    if(j > 1L)
-      M[i,j] * sum(M[row > i & col < j])
-    else
-      0
+  nrow = nrow(M)
+  ncol = ncol(M)
+  scon = sdis = 0
+  for(i in 1:(nrow-1)) {
+    for(j in 1:ncol) {
+      if(j<ncol)
+        scon = scon + M[i,j] * sum(M[(i+1):nrow, (j+1):ncol])
+      if(j>1)
+        sdis = sdis + M[i,j] * sum(M[(i+1):nrow, 1:(j-1)])
+    }
   }
 
-  temp <- expand.grid(i=seq_len(nrow-1L), j=seq_len(ncol))
-  
-  scon <- sum(unlist(mapply(calc_scon, temp$i, temp$j,
-                            MoreArgs=list(M=M,row=row,col=col),
-                            SIMPLIFY=FALSE, USE.NAMES=FALSE)))
-
-  sdis <- sum(unlist(mapply(calc_sdis, temp$i, temp$j,
-                            MoreArgs=list(M=M, row=row, col=col),
-                            SIMPLIFY=FALSE, USE.NAMES=FALSE)))
-
-  return(list(scon=scon, sdis=sdis, gamma=(scon-sdis)/(scon+sdis)))
+  list(scon=scon, sdis=sdis, gamma = (scon-sdis)/(scon+sdis))
 }

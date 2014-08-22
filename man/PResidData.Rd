@@ -14,6 +14,7 @@ An Example Dataset for use with PResidual's cobot
     \item{\code{x}}{an ordered factor with levels \code{1} < \code{2} < \code{3} < \code{4} < \code{5}}
     \item{\code{y}}{an ordered factor with levels \code{1} < \code{2} < \code{3} < \code{4}}
     \item{\code{z}}{a numeric vector}
+    \item{\code{w}}{a numeric vector}
   }
 }
 \examples{

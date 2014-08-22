@@ -7,9 +7,17 @@
 #' @author Charles Dupont
 
 print.cobot <- function(x, ...) {
-  invisible(print(matrix(c(x$T1, x$T2, x$T3,
-                           sqrt(x$varT1), sqrt(x$varT2), sqrt(x$varT3),
-                           x$pvalT1, x$pvalT2, x$pvalT3),
-                         ncol=3,
-                         dimnames=list(c("Gamma(Obs) - Gamma(Exp)", "Correlation of Residuals","Covariance of Residuals"),c("est", "stderr", "p"))), ...))
+  y <- matrix(nrow=length(x$TS),ncol=3)
+  dims <- character(length(x$TS))
+  for (i in 1:length(x$TS)){
+    y[i,] <- c(x$TS[[i]]$ts, sqrt(x$TS[[i]]$var),x$TS[[i]]$pval)
+    dims[i] <- x$TS[[i]]$label
+  }
+  dimnames(y) <- list(dims,c('est','stderr','p'))
+  invisible(print(y,...))
+  cat('Fisher Transform:',x$fisher,'\n')
+  cat(format(x$conf.int*100,digits=3),'% Confidence Interval: (',
+      x$TS[[2]]$lower,', ',x$TS[[2]]$upper,')\n',sep='')
+  cat('Number of Observations:',x$data.points,'\n')
+  invisible(y)
 }

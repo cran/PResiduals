@@ -148,7 +148,16 @@ newpolr <- function(formula, data, weights, start, ..., subset,
         dn <- c(names(beta), names(zeta))
         H <- res$hessian
         dimnames(H) <- list(dn, dn)
-        fit$Hessian <- H
+
+        # Shuffle
+        Hessian <- matrix(nrow=nrow(H),ncol=ncol(H))
+        dimnames(Hessian) <- list(c(names(zeta),names(beta)),c(names(zeta),names(beta)))
+        Hessian[names(zeta),names(zeta)] <- -H[names(zeta),names(zeta)]
+        Hessian[names(beta),names(beta)] <- -H[names(beta),names(beta)]
+        Hessian[names(beta),names(zeta)] <-  H[names(beta),names(zeta)]
+        Hessian[names(zeta),names(beta)] <-  H[names(zeta),names(beta)]
+
+        fit$Hessian <- Hessian
     }
     if(model) fit$model <- m
     fit$na.action <- attr(m, "na.action")
@@ -202,7 +211,7 @@ newpolr.fit <- function(x, y, wt, start, offset, method, ...)
       g1 <- if(pc) x * (wt*(p1 - p2)/pr) else numeric()
       xx <- .polrY1*p1 - .polrY2*p2
       g2 <- - xx * (wt/pr)
-      if(all(pr > 0)) cbind(g1, g2) else matrix(NA_real_, n, pc+q)
+      if(all(pr > 0)) cbind(-g2, g1) else matrix(NA_real_, n, pc+q)
     }
 
     dgamma <- function(beta) {
