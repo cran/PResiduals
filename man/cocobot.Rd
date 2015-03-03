@@ -49,7 +49,7 @@ residual information between \var{X} and \var{Y}.  This is done by
 computing residuals for both models, calculating their correlation, and
 testing the null of no residual correlation.  This procedure is analogous to test statistic
 \code{T2} in \code{cobot}.  Two test statistics (correlations) are currently output.  The first
-is the correlation between probability-scale residuals (PResid). The second is the correlation between
+is the correlation between probability-scale residuals. The second is the correlation between
 the observed-minus-expected residual for the continuous outcome model and a latent variable residual
 for the ordinal model.
 }

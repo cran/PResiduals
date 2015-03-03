@@ -13,8 +13,5 @@
 \description{
 cocobot class print method
 }
-\author{
-Charles Dupont
-}
 \keyword{print}
 

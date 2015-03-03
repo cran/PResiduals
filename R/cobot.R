@@ -321,7 +321,7 @@ ordinal.scores <- function(mf, mm, method) {
 #' distribution of \var{X} and \var{Y} with the joint fitted
 #' distribution of \var{X} and \var{Y} under independence conditional
 #' on \var{Z}. \code{T2} computes the correlation between ordinal
-#' (probability scale) residuals from both models and tests the null
+#' (probability-scale) residuals from both models and tests the null
 #' of no residual correlation.  \code{T3} evaluates the
 #' concordance--disconcordance of data drawn from the joint fitted
 #' distribution of \var{X} and \var{Y} under conditional independence
@@ -336,7 +336,7 @@ ordinal.scores <- function(mf, mm, method) {
 #' tested is \eqn{H_0 : X}{H0 : X} independant of \var{Y} conditional
 #' on \var{Z}.
 #' 
-#' Note that \code{T2} can be thought of as an adjust rank
+#' Note that \code{T2} can be thought of as an adjusted rank
 #' correlation.(\cite{Li C and Shepherd BE, A new residual for ordinal
 #' outcomes. Biometrika 2012; 99:473-480})
 #'
@@ -373,9 +373,6 @@ ordinal.scores <- function(mf, mm, method) {
 #' @import Formula
 #' @export
 #' @seealso \code{\link{Formula}}, \code{\link{as.data.frame}}
-#' @author Charles Dupont \email{charles.dupont@@vanderbilt.edu}
-#' @author Chun Li \email{chun.li@@vanderbilt.edu}
-#' @author Bryan Shepherd \email{bryan.shepherd@@vanderbilt.edu}
 #' @include newPolr.R
 #' @include diagn.R
 #' @include GKGamma.R
@@ -397,6 +394,10 @@ cobot <- function(formula, link=c("logit", "probit", "cloglog", "cauchit"),
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf$na.action <- na.action
+  # We set xlev to a benign non-value in the call so that it won't get partially matched
+  # to any variable in the formula. For instance a variable named 'x' could possibly get
+  # bound to xlev, which is not what we want.
+  mf$xlev <- integer(0) 
   mf[[1L]] <- as.name("model.frame")
 
 

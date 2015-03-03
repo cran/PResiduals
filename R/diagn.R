@@ -9,7 +9,6 @@
 #' @export
 #' @seealso \code{\link{diag}}
 #' @keywords array
-#' @author Chun Li
 #' @examples
 #' diag(5)
 #' diagn(5)

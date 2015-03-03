@@ -146,7 +146,7 @@ corTS = function(xresid, yresid,
 #' computing residuals for both models, calculating their correlation, and 
 #' testing the null of no residual correlation.  This procedure is analogous to test statistic 
 #' \code{T2} in \code{cobot}.  Two test statistics (correlations) are currently output.  The first
-#' is the correlation between probability-scale residuals (PResid). The second is the correlation between 
+#' is the correlation between probability-scale residuals. The second is the correlation between 
 #' the observed-minus-expected residual for the continuous outcome model and a latent variable residual
 #' for the ordinal model.
 #' 
@@ -215,6 +215,10 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf$na.action <- na.action
+  # We set xlev to a benign non-value in the call so that it won't get partially matched
+  # to any variable in the formula. For instance a variable named 'x' could possibly get
+  # bound to xlev, which is not what we want.
+  mf$xlev <- integer(0) 
   mf[[1L]] <- as.name("model.frame")
   
   

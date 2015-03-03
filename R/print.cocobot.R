@@ -4,7 +4,6 @@
 #' @param ... arguments passed to print.default
 #' @keywords print
 #' @export
-#' @author Charles Dupont
 print.cocobot <- function(x, ...) {
   y <- matrix(nrow=length(x$TS),ncol=5)
   dims <- character(length(x$TS))

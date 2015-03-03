@@ -9,15 +9,40 @@ presid.glm <- function(object, emp=FALSE, ...) {
            stop("Unhandled family", object$family$family))
 }
 
+###Glm()
+#' @export
+presid.Glm <- function(object, emp=TRUE, ...) {
+     switch(object$family$family ,
+           poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
+           binomial = object$y - object$fitted.values,
+           gaussian = if(emp) (2 * rank(residuals(object)) - 1 - length(object$y)) / length(object$y) else 2 * pnorm((object$y - object$fitted.values)/(sum(object$residuals)/sqrt(object$df.residual))) - 1,
+           stop("Unhandled family", object$family$family))   
+}
+
 ###lm()
 #' @export
 presid.lm <- function(object, emp=FALSE, ...) {
     y <- model.response(object$model)
   if(emp) {
-      (2 * rank(residuals(object)) - 1 - length(y)) / length(y)
+      (2 * rank(residuals(object, type="working")) - 1 - length(y)) / length(y)
   } else {
       2 * pnorm((y - object$fitted.values)/summary(object)$sigma) - 1
   }
+}
+
+
+###ols()
+#' @export
+presid.ols <- function(object, emp=FALSE, ...) {
+    if(is.null(object$y))
+        stop("Need Y=TRUE in fitting function call")
+    y <- object$y
+    if(emp) {
+	(2 * rank(residuals(object, type="ordinary")) - 1 - length(y)) / length(y)
+    } else {
+        sigma <- sqrt(sum(object$residuals^2)/object$df.residual)
+        2 * pnorm((y - object$fitted.values)/sigma) - 1
+   }
 }
 
 ###negative binomial
@@ -50,10 +75,23 @@ presid.polr <- function(object, ...) {
 presid.coxph <- function(object, ...) {
     time <- object$y[,1]
     delta <- object$y[,2]
+    resid <- residuals(object, type="martingale")
     
-    1 - exp(residuals(object) - delta) - delta*exp(residuals(object) - delta)
+    1 - exp(resid - delta) - delta*exp(resid - delta)
 }
 
+###cph()
+#' @export
+presid.cph <- function(object, ...) {
+    if(is.null(object$y))
+        stop("X=TRUE must be set in fitting call")
+    
+    time <- object$y[,1]
+    delta <- object$y[,2]
+    resid <- residuals(object, type="martingale")
+
+    1 - exp(resid - delta) - delta*exp(resid - delta)
+}
 
 ###survreg()
 #' @export
@@ -105,35 +143,94 @@ presid.survreg <- function(object, ...){
            stop("Unhandled dist", object$dist))
 }
 
+###psm()
+#' @export
+presid.psm <- function(object, ...) {
+    time <- object$y[,1]
+    delta <- object$y[,2]
+    
+    switch(object$dist,
+           weibull = {
+               prob <- pweibull(exp(time), shape=1/object$scale,
+                                scale=exp(object$linear.predictors),
+                                lower.tail=TRUE, log.p=FALSE)
+               prob + delta*(prob - 1)
+           },
+           
+           exponential = {
+               prob <- pexp(time, rate=1/exp(object$linear.predictors),
+                            lower.tail=TRUE, log.p=FALSE)
+               prob + delta*(prob - 1)
+           },
+           
+           gaussian = {
+               prob <- pnorm(time, mean=object$linear.predictors,
+                             sd=object$scale, lower.tail=TRUE,
+                             log.p=FALSE)
+               prob + delta*(prob - 1)
+           },
+           
+           logistic = {
+               prob <- plogis(time, location=object$linear.predictors,
+                              scale=object$scale, lower.tail=TRUE,
+                              log.p=FALSE)
+               prob + delta*(prob - 1)
+           },
+         
+           ## loglogistic = {
+           ##     prob <- pllogis(time, shape=summary(object)$scale,
+           ##                     scale=exp(object$linear.predictors),
+           ##                     lower.tail=TRUE, log.p=FALSE)
+           ##     prob + delta*(prob - 1)
+           ## },
+         
+           lognormal = {
+               prob <- plnorm(time, meanlog=object$linear.predictors,
+                              sdlog=object$scale, lower.tail=TRUE,
+                              log.p=FALSE)
+               prob + delta*(prob - 1)
+           },
+           stop("Unhandled dist", object$dist))
+}
+
+#' @export
+presid.lrm <- function(object, ...) {
+    residuals(object, type="li.shepherd")
+}
+
+#' @export
+presid.orm <- function(object, ...) {
+    residuals(object, type="li.shepherd")
+}
+
 #' @export
 presid.default <- function(object, ...) {
     stop("Unhandled model type")
 }
 
 
-#' Probability-scale Residual
+#' Probability-scale residual
 #'
-#' \code{presid} Calculates the probability-scale residual for various model
+#' \code{presid} calculates the probability-scale residual for various model
 #' function objects. Currently supported models include \code{\link{glm}}
 #' (Poisson, binomial, and gaussian families), \code{\link{lm}} in the
-#' \pkg{stats} library, \code{\link{survreg}} (Weibull, exponential, gaussian,
+#' \pkg{stats} library; \code{\link{survreg}} (Weibull, exponential, gaussian,
 #' logistic, and lognormal distributions) and \code{\link{coxph}} in the
-#' \pkg{survival} library, and \code{\link{polr}} and \code{\link{glm.nb}} in
-#' the \pkg{MASS} library.
+#' \pkg{survival} library; \code{\link{polr}} and \code{\link{glm.nb}} in
+#' the \pkg{MASS} library; and \code{\link{ols}}, \code{\link{cph}},
+#' \code{\link{lrm}}, \code{\link{orm}}, \code{\link{psm}}, and \code{\link{Glm}}
+#' in the \pkg{rms} library.
 #' 
-#' Probability-scale residual is \eqn{P(Y* < y) - P(Y* > y)} where \eqn{y} is the observed
-#' outcome and \eqn{Y*} is a random variable from the fitted distribution.
+#' Probability-scale residual is \eqn{P(Y < y) - P(Y > y)} where \eqn{y} is the observed
+#' outcome and \eqn{Y} is a random variable from the fitted distribution.
 #'
 #' @param object The model object for which the probability-scale residual is calculated
 #' @param ... Additional arguements passed to methods
-#' @return The probability scale residual for the model
+#' @return The probability-scale residual for the model
 #' @references Shepherd BE, Li C, Liu Q.  Probability-scale residuals for continuous,
 #' discrete, and censored data.  Submitted.
 #' @references Li C and Shepherd BE, A new residual for ordinal
 #' outcomes. Biometrika 2012; 99:473-480
-#' @author Charles Dupont \email{charles.dupont@@vanderbilt.edu}
-#' @author Chun Li \email{chun.li@@vanderbilt.edu}
-#' @author Bryan Shepherd \email{bryan.shepherd@@vanderbilt.edu}
 #' @importFrom actuar pllogis
 #' @importFrom stats plnorm pnorm pexp pweibull plogis pnbinom pcauchy
 #' @export

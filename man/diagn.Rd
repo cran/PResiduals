@@ -22,9 +22,6 @@ assumes that you want a 1 by 1 matrix with the value set to \code{x}
 diag(5)
 diagn(5)
 }
-\author{
-Chun Li
-}
 \seealso{
 \code{\link{diag}}
 }

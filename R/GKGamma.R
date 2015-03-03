@@ -11,7 +11,6 @@
 #' for cross classifications, Journal of the American Statistical
 #' Association, 49, 732-764.
 #' @export
-#' @author Chun Li
 
 GKGamma <- function(M) {
   nrow = nrow(M)

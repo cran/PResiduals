@@ -17,9 +17,6 @@ GKGamma(M)
 \description{
 Computes Goodman-Kruskal's \eqn{\gamma}
 }
-\author{
-Chun Li
-}
 \references{
 Goodman LA, Kruskal WH (1954) Measures of association
 for cross classifications, Journal of the American Statistical

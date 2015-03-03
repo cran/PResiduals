@@ -4,7 +4,6 @@
 #' @keywords print
 #' @export
 #' @method print cobot
-#' @author Charles Dupont
 
 print.cobot <- function(x, ...) {
   y <- matrix(nrow=length(x$TS),ncol=3)

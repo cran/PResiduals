@@ -54,7 +54,7 @@ computing one of 3 test statistics.  \code{T1} compares empirical
 distribution of \var{X} and \var{Y} with the joint fitted
 distribution of \var{X} and \var{Y} under independence conditional
 on \var{Z}. \code{T2} computes the correlation between ordinal
-(probability scale) residuals from both models and tests the null
+(probability-scale) residuals from both models and tests the null
 of no residual correlation.  \code{T3} evaluates the
 concordance--disconcordance of data drawn from the joint fitted
 distribution of \var{X} and \var{Y} under conditional independence
@@ -70,20 +70,13 @@ This indicates that models of \code{\var{X} ~ \var{Z}} and
 tested is \eqn{H_0 : X}{H0 : X} independant of \var{Y} conditional
 on \var{Z}.
 
-Note that \code{T2} can be thought of as an adjust rank
+Note that \code{T2} can be thought of as an adjusted rank
 correlation.(\cite{Li C and Shepherd BE, A new residual for ordinal
 outcomes. Biometrika 2012; 99:473-480})
 }
 \examples{
 data(PResidData)
 cobot(x|y~z, data=PResidData)
-}
-\author{
-Charles Dupont \email{charles.dupont@vanderbilt.edu}
-
-Chun Li \email{chun.li@vanderbilt.edu}
-
-Bryan Shepherd \email{bryan.shepherd@vanderbilt.edu}
 }
 \references{
 Li C and Shepherd BE, Test of association between two
