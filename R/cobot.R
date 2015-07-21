@@ -1,4 +1,4 @@
-ordinal.scores.logit = function(y, X) {
+ordinal.scores.logit <- function(y, X) {
   ## y is a numeric vector
   ## X is a vector or matrix with one or more columns.
 
@@ -224,8 +224,14 @@ ordinal.scores.logit = function(y, X) {
     }
   }
 
+  low.x = cbind(0, Gamma)[cbind(1:N, y)]
+  hi.x = cbind(1-Gamma, 0)[cbind(1:N, y)]
+
+  presid <- low.x - hi.x
+  dpresid.dtheta <- dlow.dtheta - dhi.dtheta
 
   list(mod = mod,
+       presid=presid,
        dl.dtheta = dl.dtheta,
        d2l.dtheta.dtheta = d2l.dtheta.dtheta,
        var.theta = var.theta,
@@ -234,9 +240,11 @@ ordinal.scores.logit = function(y, X) {
        Gamma = Gamma,
        dgamma.dtheta = dgamma.dtheta,
        dlow.dtheta=dlow.dtheta,
-       dhi.dtheta=dhi.dtheta)
+       dhi.dtheta=dhi.dtheta,
+       dpresid.dtheta=dpresid.dtheta)
 }
 
+#' @importFrom stats coef
 ordinal.scores <- function(mf, mm, method) {
   ## mf is the model.frame of the data
 
@@ -299,7 +307,14 @@ ordinal.scores <- function(mf, mm, method) {
 
   d2l.dtheta.dtheta <- mod$Hessian
 
+  low.x = cbind(0, Gamma)[cbind(1:N, y)]
+  hi.x = cbind(1-Gamma, 0)[cbind(1:N, y)]
+
+  presid <- low.x - hi.x
+  dpresid.dtheta <- dlow.dtheta - dhi.dtheta
+
   list(mod = mod,
+       presid=presid,
        dl.dtheta = dl.dtheta,
        d2l.dtheta.dtheta = d2l.dtheta.dtheta,
        p0 = p0,
@@ -307,7 +322,8 @@ ordinal.scores <- function(mf, mm, method) {
        Gamma = Gamma,
        dcumpr=dcumpr,
        dlow.dtheta=dlow.dtheta,
-       dhi.dtheta=dhi.dtheta)
+       dhi.dtheta=dhi.dtheta,
+       dpresid.dtheta=dpresid.dtheta)
 }
 
 #' Conditional ordinal by ordinal tests for association.
@@ -371,6 +387,7 @@ ordinal.scores <- function(mf, mm, method) {
 #' @references Li C and Shepherd BE, A new residual for ordinal
 #' outcomes. Biometrika 2012; 99:473-480
 #' @import Formula
+#' @importFrom stats na.fail model.matrix contrasts model.frame model.response cor
 #' @export
 #' @seealso \code{\link{Formula}}, \code{\link{as.data.frame}}
 #' @include newPolr.R

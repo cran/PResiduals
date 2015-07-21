@@ -53,6 +53,7 @@
 #' @references
 #' polr from MASS
 #' @seealso \code{\link{optim}}, \code{\link{glm}}, \code{\link[nnet]{multinom}}
+#' @importFrom stats model.weights model.offset model.response glm.fit .getXlevels binomial
 
 
 newpolr <- function(formula, data, weights, start, ..., subset,
@@ -167,6 +168,8 @@ newpolr <- function(formula, data, weights, start, ..., subset,
     fit
 }
 
+
+#' @importFrom stats dlogis dnorm dcauchy optim
 newpolr.fit <- function(x, y, wt, start, offset, method, ...)
 {
     fmin <- function(beta) {

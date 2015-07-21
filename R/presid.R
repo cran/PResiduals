@@ -1,5 +1,6 @@
 ###glm()
 #' @export
+#' @importFrom stats ppois dpois residuals pnorm
 presid.glm <- function(object, emp=FALSE, ...) {
     ##gaussian.emp = (2 * rank(residuals(object))-1-length(y))/length(y)  #need to figure out how to incorporate this in this function
     switch(object$family$family ,
@@ -11,6 +12,7 @@ presid.glm <- function(object, emp=FALSE, ...) {
 
 ###Glm()
 #' @export
+#' @importFrom stats ppois dpois pnorm residuals
 presid.Glm <- function(object, emp=TRUE, ...) {
      switch(object$family$family ,
            poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
@@ -21,6 +23,7 @@ presid.Glm <- function(object, emp=TRUE, ...) {
 
 ###lm()
 #' @export
+#' @importFrom stats model.response residuals pnorm
 presid.lm <- function(object, emp=FALSE, ...) {
     y <- model.response(object$model)
   if(emp) {
@@ -33,6 +36,7 @@ presid.lm <- function(object, emp=FALSE, ...) {
 
 ###ols()
 #' @export
+#' @importFrom stats residuals
 presid.ols <- function(object, emp=FALSE, ...) {
     if(is.null(object$y))
         stop("Need Y=TRUE in fitting function call")
@@ -47,6 +51,7 @@ presid.ols <- function(object, emp=FALSE, ...) {
 
 ###negative binomial
 #' @export
+#' @importFrom stats pnbinom
 presid.negbin <- function(object, ...) {
   pnbinom(object$y-1, mu=object$fitted.values, size=object$theta ) + pnbinom(object$y, mu=object$fitted.values, size=object$theta) -1
 }
@@ -54,6 +59,7 @@ presid.negbin <- function(object, ...) {
 
 ###polr
 #' @export
+#' @importFrom stats plogis pnorm pcauchy model.response
 presid.polr <- function(object, ...) {
     pfun <- switch(object$method,
                    logistic = plogis,
@@ -72,6 +78,7 @@ presid.polr <- function(object, ...) {
 
 ###coxph()
 #' @export
+#' @importFrom stats residuals
 presid.coxph <- function(object, ...) {
     time <- object$y[,1]
     delta <- object$y[,2]
@@ -82,6 +89,7 @@ presid.coxph <- function(object, ...) {
 
 ###cph()
 #' @export
+#' @importFrom stats residuals
 presid.cph <- function(object, ...) {
     if(is.null(object$y))
         stop("X=TRUE must be set in fitting call")
@@ -95,6 +103,7 @@ presid.cph <- function(object, ...) {
 
 ###survreg()
 #' @export
+#' @importFrom stats pweibull pexp pnorm plogis plnorm
 presid.survreg <- function(object, ...){
     time <- object$y[,1]
     delta <- object$y[,2]
@@ -145,6 +154,7 @@ presid.survreg <- function(object, ...){
 
 ###psm()
 #' @export
+#' @importFrom stats pweibull pexp pnorm plogis plnorm
 presid.psm <- function(object, ...) {
     time <- object$y[,1]
     delta <- object$y[,2]
@@ -194,11 +204,13 @@ presid.psm <- function(object, ...) {
 }
 
 #' @export
+#' @importFrom stats residuals
 presid.lrm <- function(object, ...) {
     residuals(object, type="li.shepherd")
 }
 
 #' @export
+#' @importFrom stats residuals
 presid.orm <- function(object, ...) {
     residuals(object, type="li.shepherd")
 }
@@ -231,8 +243,6 @@ presid.default <- function(object, ...) {
 #' discrete, and censored data.  Submitted.
 #' @references Li C and Shepherd BE, A new residual for ordinal
 #' outcomes. Biometrika 2012; 99:473-480
-#' @importFrom actuar pllogis
-#' @importFrom stats plnorm pnorm pexp pweibull plogis pnbinom pcauchy
 #' @export
 #' @examples
 #' library(survival)

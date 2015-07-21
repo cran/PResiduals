@@ -20,3 +20,12 @@ dgumbel <- function (x, loc = 0, scale = 1, log = FALSE)
     d <- log(1/scale) - x - exp(-x)
     if (!log) ifelse(is.finite(x), exp(d), 0) else ifelse(is.finite(x), d, -Inf)
 }
+
+qgumbel <- function(p, loc = 0, scale = 1, lower.tail = TRUE)
+{
+  if(!lower.tail) p <- 1 - p 
+  q <- -log(-log(p))
+  q <- loc + scale * q
+  return(q)
+}
+

@@ -1,19 +1,21 @@
 Package: PResiduals
 Type: Package
 Title: Probability-Scale Residuals and Residual Correlations
-Version: 0.2-1
-Date: 2015-03-03
+Version: 0.2-2
+Date: 2015-07-21
 Author: Charles Dupont, Jeffrey Horner, Chun Li, Qi Liu, Bryan Shepherd
 Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
 Description: Computes probability-scale residuals and residual correlations
     for continuous, ordinal, binary, count, and time-to-event data.
-Imports: MASS, Formula, rms, sandwich, actuar
+Imports: MASS, Formula, rms,
 Suggests: survival
 License: GPL (>= 2)
 Collate: 'GKGamma.R' 'PResiduals-package.R' 'pgumbel.R' 'newPolr.R'
-        'diagn.R' 'cobot.R' 'cocobot.R' 'countbot.R' 'presid.R'
+        'diagn.R' 'cobot.R' 'cocobot.R' 'cocobot_orm.R' 'condis.R'
+        'corTS.R' 'countbot.R' 'getCI.R' 'lm.scores.R' 'megabot.R'
+        'nb.scores.R' 'orm.scores.R' 'poisson.scores.R' 'presid.R'
         'print.cobot.R' 'print.cocobot.R'
-Packaged: 2015-03-03 21:33:09 UTC; dupontct
 NeedsCompilation: no
+Packaged: 2015-07-22 14:26:21 UTC; dupontct
 Repository: CRAN
-Date/Publication: 2015-03-04 00:14:10
+Date/Publication: 2015-07-23 05:45:44

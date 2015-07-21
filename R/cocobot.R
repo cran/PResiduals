@@ -1,141 +1,3 @@
-#### better to add to "pgumbel.R"
-qgumbel <- function(p, loc = 0, scale = 1, lower.tail = TRUE)
-{
-  if(!lower.tail) p <- 1-p 
-  q <- -log(-log(p))
-  q <- loc + scale * q
-  return(q)
-}
-
-getCI <- function(ts, var, fisher, ci=0.95){
-  if(!fisher){
-    lower <- ts - abs(qnorm(0.5*(1-ci)))*sqrt(var)
-    upper <- ts + abs(qnorm(0.5*(1-ci)))*sqrt(var)  
-  } else {
-    ts_f <- log( (1+ts)/(1-ts) )
-    var_f <- var*(2/(1-ts^2))^2
-    lower_f <- ts_f - abs(qnorm(0.5*(1-ci)))*sqrt(var_f)
-    upper_f <- ts_f + abs(qnorm(0.5*(1-ci)))*sqrt(var_f)
-    lower <- (exp(lower_f)-1)/(1+exp(lower_f))
-    upper <- (exp(upper_f)-1)/(1+exp(upper_f))
-  }
-  return(c(lower, upper))
-}
-
-### no need for sandwich package now
-lm.scores = function(y, X){
-  N = length(y)  
-  mod = lm(y~X)
-  smod = summary(mod)
-  resid = smod$residuals
-  ## bread = [1/N sum (- partial phi)]^-1 
-  ##       = [- 1/N  d2l. dtheta. dtheta]^-1
-  #d2l.dtheta.dtheta = - solve(bread(mod))*N
-  d2l.dtheta.dtheta = -crossprod(cbind(1, X))
-  #dl.dtheta = estfun(mod)
-  dl.dtheta <- resid*cbind(1, X)
-  presid = 2*pnorm((y - mod$fitted.values)/smod$sigma) -1
-  dresid.dtheta = t(cbind(-1, -X))
-  dpresid.dtheta = t(cbind(-2*dnorm((y - mod$fitted.values)/smod$sigma)/smod$sigma,
-                           -2*dnorm((y - mod$fitted.values)/smod$sigma)/smod$sigma *
-                             X))
-  
-  f.y<-density(resid)
-  fy.ry <- NULL
-  presid.k <- NULL
-  for (i in 1:length(resid)){
-    fy.ry[i] <- f.y$y[which(abs(f.y$x-resid[i])==min(abs(f.y$x-resid[i])))]
-    presid.k[i] <- sum(resid<resid[i])/length(resid) - sum(resid>resid[i])/length(resid)
-  }
-  dpresid.dtheta.k <- t(cbind(-2*fy.ry,
-                              -2*fy.ry*X))
-  list(mod = mod, 
-       dl.dtheta = dl.dtheta,
-       d2l.dtheta.dtheta = d2l.dtheta.dtheta,
-       resid = resid,
-       dresid.dtheta = dresid.dtheta,
-       presid = presid,
-       presid.k= presid.k,
-       dpresid.dtheta = dpresid.dtheta,
-       dpresid.dtheta.k = dpresid.dtheta.k)
-}
-
-
-corTS = function(xresid, yresid,
-                  xz.dl.dtheta, yz.dl.dtheta,
-                  xz.d2l.dtheta.dtheta, yz.d2l.dtheta.dtheta,
-                  dxresid.dthetax, dyresid.dthetay,fisher=FALSE){
-  
-  TS = cor(xresid, yresid)
-  
-  xresid2 = xresid^2
-  yresid2 = yresid^2
-  xbyyresid = xresid * yresid
-  mean.xresid = mean(xresid)
-  mean.yresid = mean(yresid)
-  mean.xbyyresid = mean(xbyyresid)
-  
-  bigphi = cbind(xz.dl.dtheta,
-                 yz.dl.dtheta,
-                 mean.xresid - xresid,
-                 mean.yresid - yresid,
-                 mean.xbyyresid - xbyyresid,
-                 mean(xresid2)-xresid2,
-                 mean(yresid2)-yresid2,
-                 0)
-  
-  npar.xz = dim(xz.dl.dtheta)[2]
-  npar.yz = dim(yz.dl.dtheta)[2]
-  Ntheta = npar.xz + npar.yz + 6
-  N = dim(xz.dl.dtheta)[1]
-  
-  A = matrix(0,Ntheta,Ntheta)
-  A[1:npar.xz, 1:npar.xz] = xz.d2l.dtheta.dtheta
-  A[npar.xz+(1:npar.yz), npar.xz+(1:npar.yz)] = yz.d2l.dtheta.dtheta
-  A[Ntheta-6+(1:6), Ntheta-6+(1:6)] = diag(N, 6)
-  
-  bigpartial = rbind(c(dxresid.dthetax %*% rep(1, N), rep(0, npar.yz)),
-                     c(rep(0, npar.xz), dyresid.dthetay %*% rep(1, N)),
-                     c(dxresid.dthetax %*% yresid, dyresid.dthetay %*% xresid),
-                     c(dxresid.dthetax %*% (2*xresid), rep(0, npar.yz)),
-                     c(rep(0, npar.xz), dyresid.dthetay %*% (2*yresid)))
-  
-  A[Ntheta-6+(1:5), 1:(npar.xz+npar.yz)] = -bigpartial
-  
-  ## TS also equals numTS / sqrt(varprod) = numTS * revsvp
-  numTS = mean.xbyyresid - mean.xresid * mean.yresid
-  var.xresid = mean(xresid2) - mean.xresid^2
-  var.yresid = mean(yresid2) - mean.yresid^2
-  varprod = var.xresid * var.yresid
-  revsvp = 1/sqrt(varprod)
-  dTS.dvarprod = numTS * (-0.5) * revsvp^3
-  
-  smallpartial = N *
-    c(-mean.yresid * revsvp + dTS.dvarprod * (-2*mean.xresid*var.yresid),
-      -mean.xresid * revsvp + dTS.dvarprod * (-2*mean.yresid*var.xresid),
-      revsvp,
-      dTS.dvarprod * var.yresid,
-      dTS.dvarprod * var.xresid)
-  A[Ntheta, Ntheta-6+(1:5)] = -smallpartial
-  
-  A[Ntheta, Ntheta-6+(1:5)] = -smallpartial
-  
-  SS = solve(A, t(bigphi))
-  var.theta = tcrossprod (SS, SS)
-  varTS = var.theta[Ntheta, Ntheta]
-  pvalTS = 2 * pnorm( -abs(TS)/sqrt(varTS))
-  
-  if (fisher==TRUE){
-    ####Fisher's transformation
-    TS_f <- log( (1+TS)/(1-TS) )
-    var.TS_f <- varTS*(2/(1-TS^2))^2
-    pvalTS <- 2 * pnorm( -abs(TS_f)/sqrt(var.TS_f))
-  }
-  
-  list(TS=TS,var.TS=varTS, pval.TS=pvalTS)
-}
-
-
 #'  Conditional continuous by ordinal tests for association.
 #' 
 #' \code{cocobot} tests for independence between an ordered categorical
@@ -197,8 +59,7 @@ corTS = function(xresid, yresid,
 #' @examples
 #' data(PResidData)
 #' cocobot(y|w ~ z, data=PResidData)
-#' @importFrom rms lrm
-#' @importFrom sandwich bread estfun
+#' @importFrom stats qlogis qnorm qcauchy integrate
 
 cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit"),
                       subset, na.action=getOption('na.action'), 
@@ -265,7 +126,12 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
   }
   
   score.xz <- ordinal.scores(mx, mxz, method=link)
-  score.yz <- lm.scores(y=model.response(my), X=myz)
+  if(emp == TRUE) {
+      score.yz <- lm.scores(y=model.response(my), X=myz, emp=TRUE)
+  }
+  else {
+      score.yz <- lm.scores(y=model.response(my), X=myz, emp=FALSE)
+  }
   
   npar.xz = dim(score.xz$dl.dtheta)[2]
   npar.yz = dim(score.yz$dl.dtheta)[2]
@@ -301,21 +167,15 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
   #      label='PResid vs. Obs-Exp'
   #    )
   
+  ## presid vs presid (use pdf of normal)
+  tb <- corTS(xz.presid, score.yz$presid,
+              score.xz$dl.dtheta, score.yz$dl.dtheta,
+              score.xz$d2l.dtheta.dtheta, score.yz$d2l.dtheta.dtheta,
+              xz.dpresid.dtheta, score.yz$dpresid.dtheta,fisher)
   if (emp==TRUE){
-    ### presid vs presid (emprical)
-    tb = corTS(xz.presid, score.yz$presid.k,
-                score.xz$dl.dtheta, score.yz$dl.dtheta,
-                score.xz$d2l.dtheta.dtheta, score.yz$d2l.dtheta.dtheta,
-                xz.dpresid.dtheta, score.yz$dpresid.dtheta.k,fisher)
     tb.label = "PResid vs. PResid (empirical)"
   } else {
-    ### presid vs presid (use pdf of normal)
-    tb = corTS(xz.presid, score.yz$presid,
-                score.xz$dl.dtheta, score.yz$dl.dtheta,
-                score.xz$d2l.dtheta.dtheta, score.yz$d2l.dtheta.dtheta,
-                xz.dpresid.dtheta, score.yz$dpresid.dtheta,fisher)
-    tb.label = "PResid vs. PResid (assume normality)"
-    
+      tb.label = "PResid vs. PResid (assume normality)"    
   }
   ans$TS$TB <- 
       list( 
@@ -323,6 +183,8 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
         label = tb.label
       )
 
+  T3 <- 3*sum(xz.presid*score.yz$presid)/N
+  
   rij <- cbind(score.xz$Gamma, 1)[cbind(1:N, xx)]
   rij_1 <- cbind(0,score.xz$Gamma)[cbind(1:N, xx)]
   pij <- rij-rij_1
@@ -404,12 +266,12 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
   ans <- structure(ans, class="cocobot")
 
   # Apply confidence intervals
-  for (i in seq_len(length(ans$TS))){
+  for (i in seq_len(length(ans$TS))) {
     ts_ci <- getCI(ans$TS[[i]]$ts,ans$TS[[i]]$var,ans$fisher,conf.int)
     ans$TS[[i]]$lower <- ts_ci[1]
     ans$TS[[i]]$upper <- ts_ci[2]
   }
 
-  ans
-  
+  print(T3)
+  return(ans)
 }
