@@ -79,32 +79,41 @@ presid.polr <- function(object, ...) {
 ###coxph()
 #' @export
 #' @importFrom stats residuals
-presid.coxph <- function(object, ...) {
+presid.coxph <- function(object, type=c("standard", "Cox-Snell-like"), ...) {
     time <- object$y[,1]
     delta <- object$y[,2]
     resid <- residuals(object, type="martingale")
+    if(type[1]=="standard"){
+      result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
+    }else if(type[1]=="Cox-Snell-like"){
+      csresids<-delta - resid
+      result<-2*(1-exp(-csresids))-1
+    }else stop("type needs to be either standard or Cox-Snell-like")
     
-    1 - exp(resid - delta) - delta*exp(resid - delta)
 }
 
 ###cph()
 #' @export
 #' @importFrom stats residuals
-presid.cph <- function(object, ...) {
+presid.cph <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
     if(is.null(object$y))
         stop("X=TRUE must be set in fitting call")
     
     time <- object$y[,1]
     delta <- object$y[,2]
     resid <- residuals(object, type="martingale")
-
-    1 - exp(resid - delta) - delta*exp(resid - delta)
+    if(type[1]=="standard"){
+      result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
+    }else if(type[1]=="Cox-Snell-like"){
+      csresids<-delta - resid
+      result<-2*(1-exp(-csresids))-1
+    }else stop("type needs to be either standard or Cox-Snell-like")
 }
 
 ###survreg()
 #' @export
 #' @importFrom stats pweibull pexp pnorm plogis plnorm
-presid.survreg <- function(object, ...){
+presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
     time <- object$y[,1]
     delta <- object$y[,2]
     
@@ -113,41 +122,61 @@ presid.survreg <- function(object, ...){
                prob <- pweibull(exp(time), shape=1/summary(object)$scale,
                                 scale=exp(object$linear.predictors),
                                 lower.tail=TRUE, log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
+              
            },
            
            exponential = {
                prob <- pexp(time, rate=1/exp(object$linear.predictors),
                             lower.tail=TRUE, log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            
            gaussian = {
                prob <- pnorm(time, mean=object$linear.predictors,
                              sd=summary(object)$scale, lower.tail=TRUE,
                              log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            
            logistic = {
                prob <- plogis(time, location=object$linear.predictors,
                               scale=summary(object)$scale, lower.tail=TRUE,
                               log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
          
-           ## loglogistic = {
-           ##     prob <- pllogis(time, shape=summary(object)$scale,
-           ##                     scale=exp(object$linear.predictors),
-           ##                     lower.tail=TRUE, log.p=FALSE)
-           ##     prob + delta*(prob - 1)
-           ## },
-         
+
            lognormal = {
                prob <- plnorm(time, meanlog=object$linear.predictors,
                               sdlog=summary(object)$scale, lower.tail=TRUE,
                               log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            stop("Unhandled dist", object$dist))
 }
@@ -155,7 +184,7 @@ presid.survreg <- function(object, ...){
 ###psm()
 #' @export
 #' @importFrom stats pweibull pexp pnorm plogis plnorm
-presid.psm <- function(object, ...) {
+presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
     time <- object$y[,1]
     delta <- object$y[,2]
     
@@ -164,41 +193,61 @@ presid.psm <- function(object, ...) {
                prob <- pweibull(exp(time), shape=1/object$scale,
                                 scale=exp(object$linear.predictors),
                                 lower.tail=TRUE, log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            
            exponential = {
                prob <- pexp(time, rate=1/exp(object$linear.predictors),
                             lower.tail=TRUE, log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            
            gaussian = {
                prob <- pnorm(time, mean=object$linear.predictors,
                              sd=object$scale, lower.tail=TRUE,
                              log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            
            logistic = {
                prob <- plogis(time, location=object$linear.predictors,
                               scale=object$scale, lower.tail=TRUE,
                               log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
          
-           ## loglogistic = {
-           ##     prob <- pllogis(time, shape=summary(object)$scale,
-           ##                     scale=exp(object$linear.predictors),
-           ##                     lower.tail=TRUE, log.p=FALSE)
-           ##     prob + delta*(prob - 1)
-           ## },
+
          
            lognormal = {
                prob <- plnorm(time, meanlog=object$linear.predictors,
                               sdlog=object$scale, lower.tail=TRUE,
                               log.p=FALSE)
-               prob + delta*(prob - 1)
+               if(type[1]=="standard"){
+                 result <-  prob + delta*(prob - 1)
+               }else if(type[1]=="Cox-Snell-like"){
+                 result <- 2*prob-1
+               }else stop("type needs to be either standard or Cox-Snell-like")
+               result
            },
            stop("Unhandled dist", object$dist))
 }

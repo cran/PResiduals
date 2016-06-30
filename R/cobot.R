@@ -249,7 +249,7 @@ ordinal.scores <- function(mf, mm, method) {
   ## mf is the model.frame of the data
 
   if (method[1]=='logit'){
-    return(ordinal.scores.logit(y=as.numeric(model.response(mf)),X=mm))
+    return(ordinal.scores.logit(y=as.numeric(factor(model.response(mf))),X=mm))
   }
 
   ## Fit proportional odds model and obtain the MLEs of parameters.
@@ -362,7 +362,7 @@ ordinal.scores <- function(mf, mm, method) {
 #'   under \sQuote{Details}.
 #' @param link The link family to be used for ordinal models of both
 #' \var{X} and \var{Y}.  Defaults to \samp{logit}. Other options are
-#' \samp{probit}, \samp{cloglog}, and \samp{cauchit}.
+#' \samp{probit}, \samp{cloglog},\samp{loglog}, and \samp{cauchit}.
 #' @param link.x The link function to be used for a model of the first
 #' ordered variable. Defaults to value of \code{link}.
 #' @param link.y The link function to be used for a model of the
@@ -397,10 +397,10 @@ ordinal.scores <- function(mf, mm, method) {
 #' @examples
 #' data(PResidData)
 #' cobot(x|y~z, data=PResidData)
-cobot <- function(formula, link=c("logit", "probit", "cloglog", "cauchit"),
+cobot <- function(formula, link=c("logit", "probit", "cloglog","loglog", "cauchit"),
                   link.x=link,
                   link.y=link,
-                  data, subset, na.action=na.fail,fisher=FALSE,conf.int=0.95) {
+                  data, subset, na.action=na.fail,fisher=TRUE,conf.int=0.95) {
   F1 <- Formula(formula)
   Fx <- formula(F1, lhs=1)
   Fy <- formula(F1, lhs=2)
@@ -452,7 +452,7 @@ cobot <- function(formula, link=c("logit", "probit", "cloglog", "cauchit"),
   npar.yz = dim(score.yz$dl.dtheta)[2]
 
 
-  xx = as.integer(model.response(mx)); yy = as.integer(model.response(my))
+  xx = as.integer(factor(model.response(mx))); yy = as.integer(factor(model.response(my)))
   nx = length(table(xx))
   ny = length(table(yy))
   N = length(yy)
@@ -762,8 +762,8 @@ cobot <- function(formula, link=c("logit", "probit", "cloglog", "cauchit"),
   # Apply confidence intervals
   for (i in seq_len(length(ans$TS))){
     ts_ci <- getCI(ans$TS[[i]]$ts,ans$TS[[i]]$var,ans$fisher,conf.int)
-    ans$TS[[i]]$lower <- ts_ci[1]
-    ans$TS[[i]]$upper <- ts_ci[2]
+    ans$TS[[i]]$lower <- ts_ci[,1]
+    ans$TS[[i]]$upper <- ts_ci[,2]
   }
 
   ans

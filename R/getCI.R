@@ -11,6 +11,6 @@ getCI <- function(ts, var, fisher, ci=0.95){
     lower <- (exp(lower_f)-1)/(1+exp(lower_f))
     upper <- (exp(upper_f)-1)/(1+exp(upper_f))
   }
-  return(c(lower, upper))
+  return(cbind(lower, upper))
 }
 

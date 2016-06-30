@@ -1,6 +1,8 @@
 ######
+#' @importFrom SparseM as.matrix
 #' @importFrom rms orm
-orm.scores <- function (y, X, link=c("logistic", "probit", "cauchit", "loglog", "cloglog")) {
+
+orm.scores <- function (y, X, link) {
   y <- as.numeric(factor(y))
   if(!is.matrix(X)) X = matrix(X, ncol=1)
   N = length(y)
@@ -9,8 +11,9 @@ orm.scores <- function (y, X, link=c("logistic", "probit", "cauchit", "loglog", 
   nb = ncol(X)
   npar = na + nb
   Z = outer(y, 1:ny, "<=")
+  link <- ifelse(link=='logit', "logistic", link)
   
-  mod <- orm(y~X, family=link[1], x=TRUE, y=TRUE)
+  mod <- orm(y~X, family=link, x=TRUE, y=TRUE)
   
   alpha = mod$coeff[1:na]
   beta = mod$coeff[-(1:na)]
@@ -227,7 +230,7 @@ orm.scores <- function (y, X, link=c("logistic", "probit", "cauchit", "loglog", 
   dpresid.dtheta <- dlow.dtheta - dhi.dtheta
   
   result <- list(dl.dtheta=dl.dtheta,
-                 d2l.dtheta.dtheta = -mod$info.matrix,
+                 d2l.dtheta.dtheta =-as.matrix(mod$info.matrix),
                  presid=presid,
                  dpresid.dtheta = dpresid.dtheta )
   

@@ -1,21 +1,25 @@
 Package: PResiduals
 Type: Package
 Title: Probability-Scale Residuals and Residual Correlations
-Version: 0.2-3
+Version: 0.2-4
 Date: 2016-05-10
 Author: Charles Dupont, Jeffrey Horner, Chun Li, Qi Liu, Bryan Shepherd
 Maintainer: Bryan Shepherd <bryan.shepherd@VANDERBILT.EDU>
 Description: Computes probability-scale residuals and residual correlations
     for continuous, ordinal, binary, count, and time-to-event data.
-Imports: MASS, Formula, rms,
+Imports: MASS, Formula, rms, SparseM,
 Suggests: survival
 License: GPL (>= 2)
-Collate: 'GKGamma.R' 'PResiduals-package.R' 'pgumbel.R' 'newPolr.R'
-        'diagn.R' 'cobot.R' 'cocobot.R' 'cocobot_orm.R' 'condis.R'
-        'corTS.R' 'countbot.R' 'getCI.R' 'lm.scores.R' 'megabot.R'
-        'nb.scores.R' 'orm.scores.R' 'poisson.scores.R' 'presid.R'
+Collate: 'GKGamma.R' 'PResiduals-package.R' 'pgumbel.R' 'diagn.R'
+        'newPolr.R' 'cobot.R' 'cocobot.R' 'condis.R'
+        'conditional.Spearman.R' 'corTS.R' 'corr.R' 'countbot.R'
+        'getCI.R' 'kernel.function.R' 'lm.scores.R' 'megabot.R'
+        'nb.scores.R' 'orm.scores.R' 'partial.Spearman.R'
+        'plot.conditional.Spearman.R' 'poisson.scores.R' 'presid.R'
         'print.cobot.R' 'print.cocobot.R'
+        'print.conditional.Spearman.R' 'print.partial.Spearman.R'
 NeedsCompilation: no
-Packaged: 2016-05-10 17:31:28 UTC; qiliu
+Packaged: 2016-06-30 03:57:33 UTC; qiliu
 Repository: CRAN
-Date/Publication: 2016-05-12 13:46:18
+Date/Publication: 2016-06-30 18:16:11
+RoxygenNote: 5.0.1

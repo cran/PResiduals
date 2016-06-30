@@ -10,7 +10,7 @@
 #' \code{T2} in \code{cobot}.  Two test statistics (correlations) are currently output.  The first
 #' is the correlation between probability-scale residuals. The second is the correlation between 
 #' the Pearson residual for the count outcome model and a latent variable residual
-#' for the ordinal model.
+#' for the ordinal model (Li C and Shepherd BE, 2012).
 
 #'
 #' Formula is specified as \code{\var{X} | \var{Y} ~ \var{Z}}.
@@ -40,9 +40,9 @@
 
 #' @param link.x The link family to be used for the ordinal model of 
 #' \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
-#' \samp{probit}, \samp{cloglog}, and \samp{cauchit}.
+#' \samp{probit}, \samp{cloglog},\samp{loglog}, and \samp{cauchit}.
 #' 
-#' @param family.y The error distribution for the count model of \var{Y} on \var{Z}.
+#' @param fit.y The error distribution for the count model of \var{Y} on \var{Z}.
 #' Defaults to \samp{poisson}. The other option is \samp{negative binomial}. 
 #' If \samp{negative binomial} is specified, \code{\link[MASS]{glm.nb}} is called to fit the count model.
 
@@ -59,46 +59,17 @@
 #' @export
 #' @importFrom stats qlogis qnorm qcauchy integrate
 #' @examples
-#'
-#' generate.data3 = function(alphax, betax, alphay, betay, eta, N) {
-#'   z = rnorm(N,0,1)
-#'   x = v = numeric(N)
-#'  
-#'   ## px is an N x length(alphax) matrix.
-#'   ## Each row has the TRUE cummulative probabilities for each subject.
-#'   px = (1 + exp(- outer(alphax, betax*z, "+"))) ^ (-1)
-#'   aa = runif(N)
-#'   for(i in 1:N)
-#'     x[i] = sum(aa[i] > px[,i])
-#'   x = as.numeric(as.factor(x))
-#'   v = rpois(N, exp(outer(alphay, betay*z+eta[x], "+")))
-#'  
-#'   return(list(x=as.factor(x), v=v, z=z))
-#' }
-#'
-#' set.seed(13)
-#' alphax = c(-1, 0, 1, 2)
-#' betax = 1
-#' alphay = 1
-#' betay = -.5
-#'
-#' #eta = rep(0, 5)
-#' eta = c(1:5)/5
-#' N = 100
-#'
-#' data <- generate.data3(alphax, betax, alphay, betay, eta, N)
-#' ### 
-#' countbot(x|v~z, data=data, link.x="logit", family.y="poisson")
-#' countbot(x|v~z, data=data, link.x="probit", family.y="negative binomial")
+#' data(PResidData)
+#' countbot(x|c ~z, fit.y="poisson",data=PResidData)
+#' countbot(x|c ~z, fit.y="negative binomial",data=PResidData)
 
 
 
 
-
-countbot <- function(formula, data, link.x=c("logit", "probit", "cloglog", "cauchit"),
-                     family.y=c("poisson", "negative binomial"),
+countbot <- function(formula, data, link.x=c("logit", "probit","loglog", "cloglog", "cauchit"),
+                     fit.y=c("poisson", "negative binomial"),
                      subset, na.action=getOption('na.action'), 
-                     fisher=FALSE, conf.int=0.95) {
+                     fisher=TRUE, conf.int=0.95) {
   
   
   # Construct the model frames for x ~ z and y ~ z
@@ -162,11 +133,11 @@ countbot <- function(formula, data, link.x=c("logit", "probit", "cloglog", "cauc
   }
   
   score.xz <- ordinal.scores(mx, mxz,method=link.x[1])
-  if (family.y[1]=="poisson")
+  if (fit.y[1]=="poisson")
     score.yz <- poisson.scores(y=model.response(my), X=myz)
-  else if (family.y[1]=="negative binomial")
+  else if (fit.y[1]=="negative binomial")
     score.yz <- nb.scores(y=model.response(my), X=myz)
-  else stop("family.y has to be 'poisson' or 'negative binomial'")
+  else stop("fit.y has to be 'poisson' or 'negative binomial'")
   
   npar.xz = dim(score.xz$dl.dtheta)[2]
   npar.yz = dim(score.yz$dl.dtheta)[2]
@@ -201,7 +172,7 @@ countbot <- function(formula, data, link.x=c("logit", "probit", "cloglog", "cauc
       label = tb.label
     )
 
-  T3 <- 3 * sum(xz.presid * score.yz$presid) / N
+
   rij <- cbind(score.xz$Gamma, 1)[cbind(1:N, xx)]
   rij_1 <- cbind(0,score.xz$Gamma)[cbind(1:N, xx)]
   pij <- rij-rij_1
@@ -263,11 +234,10 @@ countbot <- function(formula, data, link.x=c("logit", "probit", "cloglog", "cauc
   # Apply confidence intervals
   for (i in seq_len(length(ans$TS))){
     ts_ci <- getCI(ans$TS[[i]]$ts,ans$TS[[i]]$var,ans$fisher,conf.int)
-    ans$TS[[i]]$lower <- ts_ci[1]
-    ans$TS[[i]]$upper <- ts_ci[2]
+    ans$TS[[i]]$lower <- ts_ci[,1]
+    ans$TS[[i]]$upper <- ts_ci[,2]
   }
 
-  print(T3)
   return(ans)
   
 }

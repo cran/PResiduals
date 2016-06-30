@@ -1,10 +1,10 @@
-#' cocobot class print method
-#' @method print cocobot
-#' @param x cocobot object
+#' partial.Spearman class print method
+#' @method print partial.Spearman
+#' @param x partial.Spearman object
 #' @param ... arguments passed to print.default
 #' @keywords print
 #' @export
-print.cocobot <- function(x, ...) {
+print.partial.Spearman <- function(x, ...) {
   y <- matrix(nrow=length(x$TS),ncol=5)
   dims <- character(length(x$TS))
   for (i in 1:length(x$TS)){
@@ -13,8 +13,8 @@ print.cocobot <- function(x, ...) {
   }
   dimnames(y) <- list(dims,c('est','stderr','p','lower CI','upper CI'))
   invisible(print(y,...))
+  cat('Fisher Transform:',x$fisher,'\n')
   cat('Confidence Interval: ', format(x$conf.int*100,digits=3),'%\n', sep='')
   cat('Number of Observations:',x$data.points,'\n')
-  cat('Fisher Transform:',x$fisher,'\n')
   invisible(y)
 }

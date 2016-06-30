@@ -1,11 +1,3 @@
-pGumbel <- function (q, loc = 0, scale = 1, lower.tail = TRUE) 
-{
-    q <- (q - loc)/scale
-    p <- exp(-exp(q))
-    if (lower.tail) 
-        1 - p
-    else p
-}
 
 pgumbel <- function(q, loc = 0, scale = 1, lower.tail = TRUE)
 {
@@ -28,4 +20,20 @@ qgumbel <- function(p, loc = 0, scale = 1, lower.tail = TRUE)
   q <- loc + scale * q
   return(q)
 }
+
+
+pGumbel <- function(q, loc = 0, scale = 1, lower.tail = TRUE)
+{
+    q <- (q - loc)/scale
+    p <- exp(-exp(q))
+    if (lower.tail) 1 - p else p
+}
+
+dGumbel <- function (x, loc = 0, scale = 1, log = FALSE)
+{
+    x <- -(x - loc)/scale
+    d <- log(1/scale) - x - exp(-x)
+    if (!log) exp(d) else d
+}
+
 

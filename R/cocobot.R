@@ -10,7 +10,7 @@
 #' \code{T2} in \code{cobot}.  Two test statistics (correlations) are currently output.  The first
 #' is the correlation between probability-scale residuals. The second is the correlation between 
 #' the observed-minus-expected residual for the continuous outcome model and a latent variable residual
-#' for the ordinal model.
+#' for the ordinal model (Li C and Shepherd BE, 2012). 
 #' 
 #' Formula is specified as \code{\var{X} | \var{Y} ~ \var{Z}}.
 #' This indicates that models of \code{\var{X} ~ \var{Z}} and
@@ -32,7 +32,7 @@
 #' 
 #' @param link The link family to be used for the ordinal model of 
 #' \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
-#' \samp{probit}, \samp{cloglog}, and \samp{cauchit}.
+#' \samp{probit}, \samp{cloglog}, \samp{loglog}, and \samp{cauchit}.
 #' 
 #' @param data an optional data frame, list or environment (or object
 #' coercible by \code{\link{as.data.frame}} to a data frame)
@@ -61,9 +61,9 @@
 #' cocobot(y|w ~ z, data=PResidData)
 #' @importFrom stats qlogis qnorm qcauchy integrate
 
-cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit"),
+cocobot <- function(formula, data, link=c("logit", "probit", "cloglog","loglog", "cauchit"),
                       subset, na.action=getOption('na.action'), 
-                      emp=TRUE,fisher=FALSE,conf.int=0.95) {
+                      emp=TRUE,fisher=TRUE, conf.int=0.95) {
 
   # Construct the model frames for x ~ z and y ~ z
   F1 <- Formula(formula)
@@ -183,7 +183,7 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
         label = tb.label
       )
 
-  T3 <- 3*sum(xz.presid*score.yz$presid)/N
+
   
   rij <- cbind(score.xz$Gamma, 1)[cbind(1:N, xx)]
   rij_1 <- cbind(0,score.xz$Gamma)[cbind(1:N, xx)]
@@ -268,10 +268,9 @@ cocobot <- function(formula, data, link=c("logit", "probit", "cloglog", "cauchit
   # Apply confidence intervals
   for (i in seq_len(length(ans$TS))) {
     ts_ci <- getCI(ans$TS[[i]]$ts,ans$TS[[i]]$var,ans$fisher,conf.int)
-    ans$TS[[i]]$lower <- ts_ci[1]
-    ans$TS[[i]]$upper <- ts_ci[2]
+    ans$TS[[i]]$lower <- ts_ci[,1]
+    ans$TS[[i]]$upper <- ts_ci[,2]
   }
 
-  print(T3)
   return(ans)
 }

@@ -1,5 +1,6 @@
 #' slightly modified version of polr from MASS
 #' @param formula a formula
+#' @param start initial values for the parameters.
 #' @param data an optional data frame, list or environment (or object coercible
 #' by \code{\link{as.data.frame}} to a data frame) containing the variables in
 #' the model.  If not found in \code{data}, the variables are taken from
@@ -12,12 +13,6 @@
 #' contain \code{NA}s.  The default is is \code{\link{na.fail}}.  Another
 #' possible value is \code{NULL}, no action.  Value \code{\link{na.exclude}} can
 #' be useful.
-#' @param offset this can be used to specify an \emph{a priori} known component
-#' to be included in the linear predictor during fitting.  This should be
-#' \code{NULL} or a numeric vector of length equal to the number of cases.  One
-#' or more \code{\link{offset}} terms can be included in the formula instead or
-#' as well, and if more than one are specified their sum is used.  See
-#' \code{\link{model.offset}}.
 #' @param contrasts     a list of contrasts to be used for some or all of the
 #' factors appearing as variables in the model formula.
 #' @param ...     additional arguments to be passed to \code{\link{optim}}, most
@@ -26,7 +21,7 @@
 #' should be returned.  Use this if you intend to call \code{\link{summary}} or
 #' \code{\link{vcov}} on the fit.
 #' @param model logical for whether the model matrix should be returned.
-#' @param method logistic or probit or complementary log-log or cauchit
+#' @param method logistic or probit or complementary log-log, loglog,  or cauchit
 #' (corresponding to a Cauchy latent variable).
 #' @return   A object of class \code{"polr"}.  This has components
 #' \item{coefficients}{the coefficients of the linear predictor, which has no
@@ -58,7 +53,7 @@
 
 newpolr <- function(formula, data, weights, start, ..., subset,
                  na.action, contrasts = NULL, Hess = FALSE, model = TRUE,
-                 method = c("logit", "probit", "cloglog", "cauchit"))
+                 method = c("logit", "probit", "cloglog","loglog", "cauchit"))
 {
     m <- match.call(expand.dots = FALSE)
     method <- match.arg(method)
@@ -98,6 +93,7 @@ newpolr <- function(formula, data, weights, start, ..., subset,
                    "probit" = glm.fit(X, y1, wt, family = binomial("probit"), offset = offset),
                    ## this is deliberate, a better starting point
                    "cloglog" = glm.fit(X, y1, wt, family = binomial("probit"), offset = offset),
+                   "loglog" = glm.fit(X, y1, wt, family = binomial("probit"), offset = offset),
                    "cauchit" = glm.fit(X, y1, wt, family = binomial("cauchit"), offset = offset))
         if(!fit$converged)
             stop("attempt to find suitable starting values failed")
@@ -127,9 +123,9 @@ newpolr <- function(formula, data, weights, start, ..., subset,
 
     eta <- if(pc) offset + drop(x %*% beta) else offset + rep(0, n)
     pfun <- switch(method, logit = plogis, probit = pnorm,
-                   cloglog = pgumbel, cauchit = pcauchy)
+                   cloglog = pgumbel,loglog=pGumbel, cauchit = pcauchy)
     dfun <- switch(method, logit = dlogis, probit = dnorm,
-                   cloglog = dgumbel, cauchit = dcauchy)
+                   cloglog = dgumbel,loglog=dGumbel, cauchit = dcauchy)
     cumpr <- matrix(pfun(matrix(zeta, n, q, byrow=TRUE) - eta), , q)
     dcumpr <- matrix(dfun(matrix(zeta, n, q, byrow=TRUE) - eta), , q)
     dimnames(cumpr) <- dimnames(dcumpr) <- list(row.names(m), names(zeta))
@@ -247,9 +243,9 @@ newpolr.fit <- function(x, y, wt, start, offset, method, ...)
     }
     
     pfun <- switch(method, logit = plogis, probit = pnorm,
-                   cloglog = pgumbel, cauchit = pcauchy)
+                   cloglog = pgumbel,loglog=pGumbel, cauchit = pcauchy)
     dfun <- switch(method, logit = dlogis, probit = dnorm,
-                   cloglog = dgumbel, cauchit = dcauchy)
+                   cloglog = dgumbel,loglog=dGumbel, cauchit = dcauchy)
     n <- nrow(x)
     pc <- ncol(x)
     ind_pc <- seq_len(pc)
