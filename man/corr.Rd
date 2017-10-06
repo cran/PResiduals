@@ -18,4 +18,3 @@ the correlation coefficient between d[,1] and d[,2].
 This is a copy of corr function from the boot package. It calculates the correlation coefficient in weighted form.
 }
 \keyword{correlation}
-

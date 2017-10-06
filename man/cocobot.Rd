@@ -73,4 +73,3 @@ A new residual for ordinal outcomes.
 Shepherd BE, Li C, Liu Q (submitted)
 Probability-scale residuals for continuous, discrete, and censored data.
 }
-

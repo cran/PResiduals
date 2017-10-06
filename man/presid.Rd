@@ -101,4 +101,3 @@ discrete, and censored data.  Submitted.
 Li C and Shepherd BE, A new residual for ordinal
 outcomes. Biometrika 2012; 99:473-480
 }
-

@@ -15,4 +15,3 @@
 partial.Spearman class print method
 }
 \keyword{print}
-

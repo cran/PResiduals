@@ -97,4 +97,3 @@ Covariate-Adjusted Spearman's Rank Correlation with Probability-Scale Residuals.
 \seealso{
 \code{\link{print.conditional.Spearman}},\code{\link{print.conditional.Spearman}}
 }
-

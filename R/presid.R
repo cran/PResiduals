@@ -1,59 +1,74 @@
 ###glm()
 #' @export
-#' @importFrom stats ppois dpois residuals pnorm
+#' @importFrom stats ppois dpois residuals pnorm naresid
 presid.glm <- function(object, emp=FALSE, ...) {
-    ##gaussian.emp = (2 * rank(residuals(object))-1-length(y))/length(y)  #need to figure out how to incorporate this in this function
-    switch(object$family$family ,
-           poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
-           binomial = object$y - object$fitted.values,
-           gaussian = if(emp) (2 * rank(residuals(object)) - 1 - length(object$y)) / length(object$y) else 2 * pnorm((object$y - object$fitted.values)/sqrt(summary(object)$dispersion)) - 1,
-           stop("Unhandled family", object$family$family))
+  ##gaussian.emp = (2 * rank(residuals(object))-1-length(y))/length(y)  #need to figure out how to incorporate this in this function
+  res <- switch(object$family$family ,
+                poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
+                binomial = object$y - object$fitted.values,
+                gaussian = if(emp) (2 * rank(residuals(object)) - 1 - length(object$y)) / length(object$y) else 2 * pnorm((object$y - object$fitted.values)/sqrt(summary(object)$dispersion)) - 1,
+                stop("Unhandled family", object$family$family))
+  res <- naresid(object$na.action, res)
+  return(res)
 }
+
 
 ###Glm()
 #' @export
 #' @importFrom stats ppois dpois pnorm residuals
 presid.Glm <- function(object, emp=TRUE, ...) {
-     switch(object$family$family ,
-           poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
-           binomial = object$y - object$fitted.values,
-           gaussian = if(emp) (2 * rank(residuals(object)) - 1 - length(object$y)) / length(object$y) else 2 * pnorm((object$y - object$fitted.values)/(sum(object$residuals)/sqrt(object$df.residual))) - 1,
-           stop("Unhandled family", object$family$family))   
+  res <- switch(object$family$family ,
+                poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
+                binomial = object$y - object$fitted.values,
+                gaussian = if(emp) (2 * rank(residuals(object)) - 1 - length(object$y)) / length(object$y) else 2 * pnorm((object$y - object$fitted.values)/(sum(object$residuals)/sqrt(object$df.residual))) - 1,
+                stop("Unhandled family", object$family$family)) 
+  
+  res <- naresid(object$na.action, res)
+  return(res)
 }
+
 
 ###lm()
 #' @export
 #' @importFrom stats model.response residuals pnorm
 presid.lm <- function(object, emp=FALSE, ...) {
-    y <- model.response(object$model)
+  y <- model.response(object$model)
   if(emp) {
-      (2 * rank(residuals(object, type="working")) - 1 - length(y)) / length(y)
+    res <- (2 * rank(residuals(object, type="working")) - 1 - length(y)) / length(y)
   } else {
-      2 * pnorm((y - object$fitted.values)/summary(object)$sigma) - 1
+    res <- 2 * pnorm((y - object$fitted.values)/summary(object)$sigma) - 1
   }
+  res <- naresid(object$na.action, res)
+  return(res)
 }
+
 
 
 ###ols()
 #' @export
 #' @importFrom stats residuals
 presid.ols <- function(object, emp=FALSE, ...) {
-    if(is.null(object$y))
-        stop("Need Y=TRUE in fitting function call")
-    y <- object$y
-    if(emp) {
-	(2 * rank(residuals(object, type="ordinary")) - 1 - length(y)) / length(y)
-    } else {
-        sigma <- sqrt(sum(object$residuals^2)/object$df.residual)
-        2 * pnorm((y - object$fitted.values)/sigma) - 1
-   }
+  if(is.null(object$y))
+    stop("Need Y=TRUE in fitting function call")
+  y <- object$y
+  if(emp) {
+    res <- (2 * rank(residuals(object, type="ordinary")) - 1 - length(y)) / length(y)
+  } else {
+    sigma <- sqrt(sum(object$residuals^2)/object$df.residual)
+    res <- 2 * pnorm((y - object$fitted.values)/sigma) - 1
+  }
+  res <- naresid(object$na.action, res)
+  return(res)
 }
+
 
 ###negative binomial
 #' @export
 #' @importFrom stats pnbinom
 presid.negbin <- function(object, ...) {
-  pnbinom(object$y-1, mu=object$fitted.values, size=object$theta ) + pnbinom(object$y, mu=object$fitted.values, size=object$theta) -1
+  res <- pnbinom(object$y-1, mu=object$fitted.values, size=object$theta ) + pnbinom(object$y, mu=object$fitted.values, size=object$theta) -1
+  res <- naresid(object$na.action, res)
+  return(res)
 }
 
 
@@ -61,207 +76,225 @@ presid.negbin <- function(object, ...) {
 #' @export
 #' @importFrom stats plogis pnorm pcauchy model.response
 presid.polr <- function(object, ...) {
-    pfun <- switch(object$method,
-                   logistic = plogis,
-                   probit = pnorm, 
-                   loglog = pgumbel,
-                   cloglog = pGumbel,
-                   cauchit = pcauchy)
-    n <- length(object$lp)
-    q <- length(object$zeta)
-    cumpr <- cbind(0, matrix(pfun(matrix(object$zeta, n, q, byrow = TRUE) - object$lp),, q), 1)
-    y <- as.integer(model.response(object$model))
-    lo <- cumpr[cbind(seq_len(n), y)]
-    hi <- 1 - cumpr[cbind(seq_len(n), y+1L)]
-    lo - hi
+  pfun <- switch(object$method,
+                 logistic = plogis,
+                 probit = pnorm, 
+                 loglog = pgumbel,
+                 cloglog = pGumbel,
+                 cauchit = pcauchy)
+  n <- length(object$lp)
+  q <- length(object$zeta)
+  cumpr <- cbind(0, matrix(pfun(matrix(object$zeta, n, q, byrow = TRUE) - object$lp),, q), 1)
+  y <- as.integer(model.response(object$model))
+  lo <- cumpr[cbind(seq_len(n), y)]
+  hi <- 1 - cumpr[cbind(seq_len(n), y+1L)]
+  res <- lo - hi
+  res <- naresid(object$na.action, res)
+  return(res)
 }
 
 ###coxph()
 #' @export
 #' @importFrom stats residuals
 presid.coxph <- function(object, type=c("standard", "Cox-Snell-like"), ...) {
-    time <- object$y[,1]
-    delta <- object$y[,2]
-    resid <- residuals(object, type="martingale")
-    if(type[1]=="standard"){
-      result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
-    }else if(type[1]=="Cox-Snell-like"){
-      csresids<-delta - resid
-      result<-2*(1-exp(-csresids))-1
-    }else stop("type needs to be either standard or Cox-Snell-like")
-    
+  
+  time <- naresid(object$na.action, object$y[,1])
+  delta <- naresid(object$na.action, object$y[,2])
+  
+  resid <- residuals(object, type="martingale")
+  if(type[1]=="standard"){
+    result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
+    result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
+  }else if(type[1]=="Cox-Snell-like"){
+    csresids<-delta - resid
+    result<-2*(1-exp(-csresids))-1
+  }else stop("type needs to be either standard or Cox-Snell-like")
+  
+  return(result)
 }
 
 ###cph()
 #' @export
 #' @importFrom stats residuals
+
 presid.cph <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
-    if(is.null(object$y))
-        stop("X=TRUE must be set in fitting call")
-    
-    time <- object$y[,1]
-    delta <- object$y[,2]
-    resid <- residuals(object, type="martingale")
-    if(type[1]=="standard"){
-      result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
-    }else if(type[1]=="Cox-Snell-like"){
-      csresids<-delta - resid
-      result<-2*(1-exp(-csresids))-1
-    }else stop("type needs to be either standard or Cox-Snell-like")
+  if(is.null(object$y))
+    stop("X=TRUE must be set in fitting call")
+  
+  time <- naresid(object$na.action, object$y[,1])
+  delta <- naresid(object$na.action, object$y[,2])
+  resid <- residuals(object, type="martingale")
+  if(type[1]=="standard"){
+    result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
+  }else if(type[1]=="Cox-Snell-like"){
+    csresids<-delta - resid
+    result<-2*(1-exp(-csresids))-1
+  }else stop("type needs to be either standard or Cox-Snell-like")
+  return(result)
 }
 
 ###survreg()
 #' @export
 #' @importFrom stats pweibull pexp pnorm plogis plnorm
 presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
-    time <- object$y[,1]
-    delta <- object$y[,2]
-    
-    switch(object$dist,
-           weibull = {
-               prob <- pweibull(exp(time), shape=1/summary(object)$scale,
-                                scale=exp(object$linear.predictors),
-                                lower.tail=TRUE, log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-              
-           },
-           
-           exponential = {
-               prob <- pexp(time, rate=1/exp(object$linear.predictors),
+  time <- naresid(object$na.action, object$y[,1])
+  delta <- naresid(object$na.action, object$y[,2])
+  
+  switch(object$dist,
+         weibull = {
+           prob <- pweibull(exp(time), shape=1/summary(object)$scale,
+                            scale=naresid(object$na.action, exp(object$linear.predictors)),
                             lower.tail=TRUE, log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
            
-           gaussian = {
-               prob <- pnorm(time, mean=object$linear.predictors,
-                             sd=summary(object)$scale, lower.tail=TRUE,
-                             log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
-           
-           logistic = {
-               prob <- plogis(time, location=object$linear.predictors,
-                              scale=summary(object)$scale, lower.tail=TRUE,
-                              log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
+         },
          
-
-           lognormal = {
-               prob <- plnorm(time, meanlog=object$linear.predictors,
-                              sdlog=summary(object)$scale, lower.tail=TRUE,
-                              log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
-           stop("Unhandled dist", object$dist))
+         exponential = {
+           prob <- pexp(time, rate=naresid(object$na.action, 1/exp(object$linear.predictors)),
+                        lower.tail=TRUE, log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         
+         gaussian = {
+           prob <- pnorm(time, mean=naresid(object$na.action, object$linear.predictors),
+                         sd=summary(object)$scale, lower.tail=TRUE,
+                         log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         
+         logistic = {
+           prob <- plogis(time, location=naresid(object$na.action, object$linear.predictors),
+                          scale=summary(object)$scale, lower.tail=TRUE,
+                          log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         
+         
+         lognormal = {
+           prob <- plnorm(time, meanlog=naresid(object$na.action, object$linear.predictors),
+                          sdlog=summary(object)$scale, lower.tail=TRUE,
+                          log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         stop("Unhandled dist", object$dist))
+  
+  return(result)
 }
+
 
 ###psm()
 #' @export
 #' @importFrom stats pweibull pexp pnorm plogis plnorm
 presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
-    time <- object$y[,1]
-    delta <- object$y[,2]
-    
-    switch(object$dist,
-           weibull = {
-               prob <- pweibull(exp(time), shape=1/object$scale,
-                                scale=exp(object$linear.predictors),
-                                lower.tail=TRUE, log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
-           
-           exponential = {
-               prob <- pexp(time, rate=1/exp(object$linear.predictors),
+  time <- naresid(object$na.action, object$y[,1])
+  delta <- naresid(object$na.action, object$y[,2])
+  
+  switch(object$dist,
+         weibull = {
+           prob <- pweibull(exp(time), shape=1/object$scale,
+                            scale=naresid(object$na.action, exp(object$linear.predictors)),
                             lower.tail=TRUE, log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
-           
-           gaussian = {
-               prob <- pnorm(time, mean=object$linear.predictors,
-                             sd=object$scale, lower.tail=TRUE,
-                             log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
-           
-           logistic = {
-               prob <- plogis(time, location=object$linear.predictors,
-                              scale=object$scale, lower.tail=TRUE,
-                              log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
          
-
+         exponential = {
+           prob <- pexp(time, rate=naresid(object$na.action, 1/exp(object$linear.predictors)),
+                        lower.tail=TRUE, log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
          
-           lognormal = {
-               prob <- plnorm(time, meanlog=object$linear.predictors,
-                              sdlog=object$scale, lower.tail=TRUE,
-                              log.p=FALSE)
-               if(type[1]=="standard"){
-                 result <-  prob + delta*(prob - 1)
-               }else if(type[1]=="Cox-Snell-like"){
-                 result <- 2*prob-1
-               }else stop("type needs to be either standard or Cox-Snell-like")
-               result
-           },
-           stop("Unhandled dist", object$dist))
+         gaussian = {
+           prob <- pnorm(time, mean=naresid(object$na.action, object$linear.predictors),
+                         sd=object$scale, lower.tail=TRUE,
+                         log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         
+         logistic = {
+           prob <- plogis(time, location=naresid(object$na.action, object$linear.predictors),
+                          scale=object$scale, lower.tail=TRUE,
+                          log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         
+         
+         
+         lognormal = {
+           prob <- plnorm(time, meanlog=naresid(object$na.action, object$linear.predictors),
+                          sdlog=object$scale, lower.tail=TRUE,
+                          log.p=FALSE)
+           if(type[1]=="standard"){
+             result <-  prob + delta*(prob - 1)
+           }else if(type[1]=="Cox-Snell-like"){
+             result <- 2*prob-1
+           }else stop("type needs to be either standard or Cox-Snell-like")
+           result
+         },
+         stop("Unhandled dist", object$dist))
+  
+  return(result)
 }
+
 
 #' @export
 #' @importFrom stats residuals
 presid.lrm <- function(object, ...) {
-    residuals(object, type="li.shepherd")
+  res <- residuals(object, type="li.shepherd")
+  res <- naresid(object$na.action, res)
+  return(res)
 }
 
 #' @export
 #' @importFrom stats residuals
 presid.orm <- function(object, ...) {
-    residuals(object, type="li.shepherd")
+    res <- residuals(object, type="li.shepherd")
+    res <- naresid(object$na.action, res)
+    return(res)
 }
 
 #' @export

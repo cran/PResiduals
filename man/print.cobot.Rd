@@ -15,4 +15,3 @@
 cobot class print method
 }
 \keyword{print}
-

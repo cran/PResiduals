@@ -27,4 +27,3 @@ diagn(5)
 \code{\link{diag}}
 }
 \keyword{array}
-

@@ -23,4 +23,3 @@ Goodman LA, Kruskal WH (1954) Measures of association
 for cross classifications, Journal of the American Statistical
 Association, 49, 732-764.
 }
-

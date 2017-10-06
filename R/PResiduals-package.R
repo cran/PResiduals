@@ -12,7 +12,7 @@
 #' @aliases PResiduals
 #' @author Bryan Shepherd \email{bryan.shepherd@@vanderbilt.edu}
 #' @author Chun Li \email{cxl791@@case.edu}
-#' @author Qi Liu \email{qi.liu.1@@vanderbilt.edu}
+#' @author Qi Liu \email{qi.liu4@@merck.com}
 #' @author Charles Dupont \email{charles.dupont@@vanderbilt.edu}
 #' @author Jeffrey Horner \email{jeffrey.horner@@vanderbilt.edu}
 #' @keywords package

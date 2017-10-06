@@ -15,4 +15,3 @@
 conditional.Spearman class plot method
 }
 \keyword{plot}
-

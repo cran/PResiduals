@@ -90,4 +90,3 @@ outcomes. Biometrika 2012; 99:473-480
 \seealso{
 \code{\link{Formula}}, \code{\link{as.data.frame}}
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/PResiduals-package.R
 \docType{package}
 \name{PResiduals-package}
-\alias{PResiduals}
 \alias{PResiduals-package}
+\alias{PResiduals}
 \title{Computes probability-scale residuals and residual correlations.}
 \description{
 This package outputs probability-scale residuals from multiple
@@ -20,11 +20,10 @@ Bryan Shepherd \email{bryan.shepherd@vanderbilt.edu}
 
 Chun Li \email{cxl791@case.edu}
 
-Qi Liu \email{qi.liu.1@vanderbilt.edu}
+Qi Liu \email{qi.liu4@merck.com}
 
 Charles Dupont \email{charles.dupont@vanderbilt.edu}
 
 Jeffrey Horner \email{jeffrey.horner@vanderbilt.edu}
 }
 \keyword{package}
-

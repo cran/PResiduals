@@ -15,4 +15,3 @@
 cocobot class print method
 }
 \keyword{print}
-

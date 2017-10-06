@@ -24,4 +24,3 @@ slightly modified version of the kernel.function from the gplm package. The kern
 The multivariate kernels are obtained by a product of unvariate kernels K(u_1)...K(u_d) or by a spherical (radially symmetric) kernel proportional to K(||u||). (The resulting kernel is a density, i.e. integrates to 1.)
 }
 \keyword{kernel}
-

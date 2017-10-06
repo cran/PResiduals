@@ -77,4 +77,3 @@ polr from MASS
 \seealso{
 \code{\link{optim}}, \code{\link{glm}}, \code{\link[nnet]{multinom}}
 }
-
