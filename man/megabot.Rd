@@ -4,9 +4,9 @@
 \alias{megabot}
 \title{Conditional tests for association.}
 \usage{
-megabot(formula, data, fit.x, fit.y, link.x = c("logit", "probit", "cloglog",
-  "loglog", "cauchit", "logistic"), link.y = c("logit", "probit", "cloglog",
-  "loglog", "cauchit", "logistic"), subset,
+megabot(formula, data, fit.x, fit.y, link.x = c("logit", "probit",
+  "cloglog", "loglog", "cauchit", "logistic"), link.y = c("logit",
+  "probit", "cloglog", "loglog", "cauchit", "logistic"), subset,
   na.action = getOption("na.action"), fisher = TRUE, conf.int = 0.95)
 }
 \arguments{

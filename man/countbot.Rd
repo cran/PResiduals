@@ -4,9 +4,10 @@
 \alias{countbot}
 \title{Conditional count by ordinal tests for association.}
 \usage{
-countbot(formula, data, link.x = c("logit", "probit", "loglog", "cloglog",
-  "cauchit"), fit.y = c("poisson", "negative binomial"), subset,
-  na.action = getOption("na.action"), fisher = TRUE, conf.int = 0.95)
+countbot(formula, data, link.x = c("logit", "probit", "loglog",
+  "cloglog", "cauchit"), fit.y = c("poisson", "negative binomial"),
+  subset, na.action = getOption("na.action"), fisher = TRUE,
+  conf.int = 0.95)
 }
 \arguments{
 \item{formula}{an object of class \code{\link{Formula}} (or one

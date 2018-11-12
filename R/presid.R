@@ -21,8 +21,8 @@ presid.Glm <- function(object, emp=TRUE, ...) {
                 poisson = 2 * ppois(object$y, object$fitted.values) - dpois(object$y, object$fitted.values) - 1,
                 binomial = object$y - object$fitted.values,
                 gaussian = if(emp) (2 * rank(residuals(object)) - 1 - length(object$y)) / length(object$y) else 2 * pnorm((object$y - object$fitted.values)/(sum(object$residuals)/sqrt(object$df.residual))) - 1,
-                stop("Unhandled family", object$family$family)) 
-  
+                stop("Unhandled family", object$family$family))
+
   res <- naresid(object$na.action, res)
   return(res)
 }
@@ -78,7 +78,7 @@ presid.negbin <- function(object, ...) {
 presid.polr <- function(object, ...) {
   pfun <- switch(object$method,
                  logistic = plogis,
-                 probit = pnorm, 
+                 probit = pnorm,
                  loglog = pgumbel,
                  cloglog = pGumbel,
                  cauchit = pcauchy)
@@ -97,10 +97,10 @@ presid.polr <- function(object, ...) {
 #' @export
 #' @importFrom stats residuals
 presid.coxph <- function(object, type=c("standard", "Cox-Snell-like"), ...) {
-  
+
   time <- naresid(object$na.action, object$y[,1])
   delta <- naresid(object$na.action, object$y[,2])
-  
+
   resid <- residuals(object, type="martingale")
   if(type[1]=="standard"){
     result <- 1 - exp(resid - delta) - delta*exp(resid - delta)
@@ -109,7 +109,7 @@ presid.coxph <- function(object, type=c("standard", "Cox-Snell-like"), ...) {
     csresids<-delta - resid
     result<-2*(1-exp(-csresids))-1
   }else stop("type needs to be either standard or Cox-Snell-like")
-  
+
   return(result)
 }
 
@@ -120,7 +120,7 @@ presid.coxph <- function(object, type=c("standard", "Cox-Snell-like"), ...) {
 presid.cph <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
   if(is.null(object$y))
     stop("X=TRUE must be set in fitting call")
-  
+
   time <- naresid(object$na.action, object$y[,1])
   delta <- naresid(object$na.action, object$y[,2])
   resid <- residuals(object, type="martingale")
@@ -139,7 +139,7 @@ presid.cph <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
 presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
   time <- naresid(object$na.action, object$y[,1])
   delta <- naresid(object$na.action, object$y[,2])
-  
+
   switch(object$dist,
          weibull = {
            prob <- pweibull(exp(time), shape=1/summary(object)$scale,
@@ -151,9 +151,9 @@ presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
              result <- 2*prob-1
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
-           
+
          },
-         
+
          exponential = {
            prob <- pexp(time, rate=naresid(object$na.action, 1/exp(object$linear.predictors)),
                         lower.tail=TRUE, log.p=FALSE)
@@ -164,7 +164,7 @@ presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
+
          gaussian = {
            prob <- pnorm(time, mean=naresid(object$na.action, object$linear.predictors),
                          sd=summary(object)$scale, lower.tail=TRUE,
@@ -176,7 +176,7 @@ presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
+
          logistic = {
            prob <- plogis(time, location=naresid(object$na.action, object$linear.predictors),
                           scale=summary(object)$scale, lower.tail=TRUE,
@@ -188,8 +188,8 @@ presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
-         
+
+
          lognormal = {
            prob <- plnorm(time, meanlog=naresid(object$na.action, object$linear.predictors),
                           sdlog=summary(object)$scale, lower.tail=TRUE,
@@ -202,7 +202,7 @@ presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
            result
          },
          stop("Unhandled dist", object$dist))
-  
+
   return(result)
 }
 
@@ -213,7 +213,7 @@ presid.survreg <- function(object, type=c("standard", "Cox-Snell-like"), ...){
 presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
   time <- naresid(object$na.action, object$y[,1])
   delta <- naresid(object$na.action, object$y[,2])
-  
+
   switch(object$dist,
          weibull = {
            prob <- pweibull(exp(time), shape=1/object$scale,
@@ -226,7 +226,7 @@ presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
+
          exponential = {
            prob <- pexp(time, rate=naresid(object$na.action, 1/exp(object$linear.predictors)),
                         lower.tail=TRUE, log.p=FALSE)
@@ -237,7 +237,7 @@ presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
+
          gaussian = {
            prob <- pnorm(time, mean=naresid(object$na.action, object$linear.predictors),
                          sd=object$scale, lower.tail=TRUE,
@@ -249,7 +249,7 @@ presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
+
          logistic = {
            prob <- plogis(time, location=naresid(object$na.action, object$linear.predictors),
                           scale=object$scale, lower.tail=TRUE,
@@ -261,9 +261,9 @@ presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
            }else stop("type needs to be either standard or Cox-Snell-like")
            result
          },
-         
-         
-         
+
+
+
          lognormal = {
            prob <- plnorm(time, meanlog=naresid(object$na.action, object$linear.predictors),
                           sdlog=object$scale, lower.tail=TRUE,
@@ -276,7 +276,7 @@ presid.psm <- function(object,type=c("standard", "Cox-Snell-like"), ...) {
            result
          },
          stop("Unhandled dist", object$dist))
-  
+
   return(result)
 }
 
@@ -314,22 +314,24 @@ presid.default <- function(object, ...) {
 #' the \pkg{MASS} library; and \code{\link{ols}}, \code{\link{cph}},
 #' \code{\link{lrm}}, \code{\link{orm}}, \code{\link{psm}}, and \code{\link{Glm}}
 #' in the \pkg{rms} library.
-#' 
+#'
 #' Probability-scale residual is \eqn{P(Y < y) - P(Y > y)} where \eqn{y} is the observed
 #' outcome and \eqn{Y} is a random variable from the fitted distribution.
 #'
 #' @param object The model object for which the probability-scale residual is calculated
 #' @param ... Additional arguements passed to methods
 #' @return The probability-scale residual for the model
-#' @references Shepherd BE, Li C, Liu Q.  Probability-scale residuals for continuous,
-#' discrete, and censored data.  Submitted.
-#' @references Li C and Shepherd BE, A new residual for ordinal
-#' outcomes. Biometrika 2012; 99:473-480
+#' @references Shepherd BE, Li C, Liu Q (2016)
+#' Probability-scale residuals for continuous, discrete, and censored data.
+#' \emph{The Canadian Jouranl of Statistics}. \bold{44}:463--476.
+#' @references Li C and Shepherd BE (2012)
+#' A new residual for ordinal outcomes.
+#' \emph{Biometrika}. \bold{99}: 473--480.
 #' @export
 #' @examples
 #' library(survival)
 #' library(stats)
-#' 
+#'
 #' set.seed(100)
 #' n <- 1000
 #' x <- rnorm(n)
@@ -341,7 +343,7 @@ presid.default <- function(object, ...) {
 #' mod.survreg <- survreg(Surv(y, d) ~ x, dist="weibull")
 #' summary(presid(mod.survreg))
 #' plot(x, presid(mod.survreg))
-#' 
+#'
 #' ##### example for proprotional hazards model
 #' n <- 1000
 #' x <- rnorm(n)
@@ -351,28 +353,28 @@ presid.default <- function(object, ...) {
 #' c <- rexp(n, rate=1)
 #' y <- ifelse(t<c, t, c)
 #' delta <- as.integer(t<c)
-#' 
+#'
 #' mod.coxph <- coxph(Surv(y, delta) ~ x)
 #' presid <- presid(mod.coxph)
 #' plot(x, presid, cex=0.4, col=delta+2)
 #'
 #' #### example for Negative Binomial regression
 #' library(MASS)
-#' 
+#'
 #' n <- 1000
 #' beta0 <- 1
 #' beta1 <- 0.5
 #' x <- runif(n, min=-3, max=3)
 #' y <- rnbinom(n, mu=exp(beta0 + beta1*x), size=3)
-#' 
+#'
 #' mod.glm.nb <- glm.nb(y~x)
 #' presid <- presid(mod.glm.nb)
 #' summary(presid)
 #' plot(x, presid, cex=0.4)
-#' 
+#'
 #' ##### example for proportional odds model
 #' library(MASS)
-#' 
+#'
 #' n <- 1000
 #' x  <- rnorm(n)
 #' y  <- numeric(n)
@@ -383,8 +385,8 @@ presid.default <- function(object, ...) {
 #' for(i in 1:n)
 #'   y[i] = sum(aa[i] > py[,i])
 #' y <-  as.factor(y)
-#' 
-#' 
+#'
+#'
 #' mod.polr <- polr(y~x, method="logistic")
 #' summary(mod.polr)
 #' presid <- presid(mod.polr)

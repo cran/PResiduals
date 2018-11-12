@@ -95,9 +95,11 @@ summary(presid)
 plot(x, presid, cex=0.4)
 }
 \references{
-Shepherd BE, Li C, Liu Q.  Probability-scale residuals for continuous,
-discrete, and censored data.  Submitted.
+Shepherd BE, Li C, Liu Q (2016)
+Probability-scale residuals for continuous, discrete, and censored data.
+\emph{The Canadian Jouranl of Statistics}. \bold{44}:463--476.
 
-Li C and Shepherd BE, A new residual for ordinal
-outcomes. Biometrika 2012; 99:473-480
+Li C and Shepherd BE (2012)
+A new residual for ordinal outcomes.
+\emph{Biometrika}. \bold{99}: 473--480.
 }
