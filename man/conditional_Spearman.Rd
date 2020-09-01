@@ -4,16 +4,24 @@
 \alias{conditional_Spearman}
 \title{Conditional Partial Spearman's Rank Correlation}
 \usage{
-conditional_Spearman(formula, conditional.by, data,
+conditional_Spearman(
+  formula,
+  conditional.by,
+  data,
   conditional.method = c("lm", "kernel", "stratification"),
   conditional.formula = paste("~", conditional.by, sep = ""),
-  kernel.function = c("normal", "gaussian", "triweight", "quartic",
-  "biweight", "epanechnikov", "uniform", "triangle"),
-  kernel.bandwidth = "silverman", fit.x = "orm", fit.y = "orm",
-  link.x = c("logit", "probit", "cloglog", "loglog", "cauchit",
-  "logistic"), link.y = c("logit", "probit", "cloglog", "loglog",
-  "cauchit", "logistic"), subset, na.action = getOption("na.action"),
-  fisher = TRUE, conf.int = 0.95)
+  kernel.function = c("normal", "gaussian", "triweight", "quartic", "biweight",
+    "epanechnikov", "uniform", "triangle"),
+  kernel.bandwidth = "silverman",
+  fit.x = "orm",
+  fit.y = "orm",
+  link.x = c("logit", "probit", "cloglog", "loglog", "cauchit", "logistic"),
+  link.y = c("logit", "probit", "cloglog", "loglog", "cauchit", "logistic"),
+  subset,
+  na.action = getOption("na.action"),
+  fisher = TRUE,
+  conf.int = 0.95
+)
 }
 \arguments{
 \item{formula}{an object of class \code{\link{Formula}} (or one

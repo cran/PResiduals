@@ -4,10 +4,18 @@
 \alias{megabot}
 \title{Conditional tests for association.}
 \usage{
-megabot(formula, data, fit.x, fit.y, link.x = c("logit", "probit",
-  "cloglog", "loglog", "cauchit", "logistic"), link.y = c("logit",
-  "probit", "cloglog", "loglog", "cauchit", "logistic"), subset,
-  na.action = getOption("na.action"), fisher = TRUE, conf.int = 0.95)
+megabot(
+  formula,
+  data,
+  fit.x,
+  fit.y,
+  link.x = c("logit", "probit", "cloglog", "loglog", "cauchit", "logistic"),
+  link.y = c("logit", "probit", "cloglog", "loglog", "cauchit", "logistic"),
+  subset,
+  na.action = getOption("na.action"),
+  fisher = TRUE,
+  conf.int = 0.95
+)
 }
 \arguments{
 \item{formula}{an object of class \code{\link{Formula}} (or one
@@ -70,6 +78,7 @@ Li C and Shepherd BE (2012)
 A new residual for ordinal outcomes.
 \emph{Biometrika}. \bold{99}: 473--480.
 
-Shepherd BE, Li C, Liu Q (submitted)
+Shepherd BE, Li C, Liu Q (2016)
 Probability-scale residuals for continuous, discrete, and censored data.
+\emph{The Canadian Journal of Statistics}. \bold{44}: 463--479.
 }

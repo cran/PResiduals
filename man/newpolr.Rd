@@ -4,9 +4,19 @@
 \alias{newpolr}
 \title{slightly modified version of polr from MASS}
 \usage{
-newpolr(formula, data, weights, start, ..., subset, na.action,
-  contrasts = NULL, Hess = FALSE, model = TRUE, method = c("logit",
-  "probit", "cloglog", "loglog", "cauchit"))
+newpolr(
+  formula,
+  data,
+  weights,
+  start,
+  ...,
+  subset,
+  na.action,
+  contrasts = NULL,
+  Hess = FALSE,
+  model = TRUE,
+  method = c("logit", "probit", "cloglog", "loglog", "cauchit")
+)
 }
 \arguments{
 \item{formula}{a formula}

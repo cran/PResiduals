@@ -4,9 +4,17 @@
 \alias{cobot}
 \title{Conditional ordinal by ordinal tests for association.}
 \usage{
-cobot(formula, link = c("logit", "probit", "cloglog", "loglog",
-  "cauchit"), link.x = link, link.y = link, data, subset,
-  na.action = na.fail, fisher = TRUE, conf.int = 0.95)
+cobot(
+  formula,
+  link = c("logit", "probit", "cloglog", "loglog", "cauchit"),
+  link.x = link,
+  link.y = link,
+  data,
+  subset,
+  na.action = na.fail,
+  fisher = TRUE,
+  conf.int = 0.95
+)
 }
 \arguments{
 \item{formula}{an object of class \code{\link{Formula}} (or one

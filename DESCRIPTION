@@ -1,12 +1,12 @@
 Package: PResiduals
 Type: Package
 Title: Probability-Scale Residuals and Residual Correlations
-Version: 0.2-6
-Date: 2018-10-15
+Version: 1.0-0
+Date: 2020-08-31
 Author: Charles Dupont, Jeffrey Horner, Chun Li, Qi Liu, Bryan Shepherd
 Maintainer: Bryan Shepherd <bryan.shepherd@VANDERBILT.EDU>
 Description: Computes probability-scale residuals and residual correlations
-    for continuous, ordinal, binary, count, and time-to-event data.
+    for continuous, ordinal, binary, count, and time-to-event data <doi:10.18637/jss.v094.i12>.
 Imports: MASS, Formula, rms, SparseM,
 Suggests: survival, testthat
 License: GPL (>= 2)
@@ -21,7 +21,7 @@ Collate: 'GKGamma.R' 'PResidData.R' 'PResiduals-package.R' 'pgumbel.R'
         'print.cobot.R' 'print.cocobot.R'
         'print.conditional_Spearman.R' 'print.partial_Spearman.R'
 NeedsCompilation: no
-RoxygenNote: 6.1.0
-Packaged: 2018-10-16 03:28:20 UTC; qiliu
+RoxygenNote: 7.1.1
+Packaged: 2020-08-31 18:53:38 UTC; liuqi
 Repository: CRAN
-Date/Publication: 2018-11-12 14:20:03 UTC
+Date/Publication: 2020-09-01 08:20:12 UTC

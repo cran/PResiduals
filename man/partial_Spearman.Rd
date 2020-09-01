@@ -4,11 +4,18 @@
 \alias{partial_Spearman}
 \title{Partial Spearman's Rank Correlation}
 \usage{
-partial_Spearman(formula, data, fit.x = "orm", fit.y = "orm",
-  link.x = c("logit", "probit", "cloglog", "loglog", "cauchit",
-  "logistic"), link.y = c("logit", "probit", "cloglog", "loglog",
-  "cauchit", "logistic"), subset, na.action = getOption("na.action"),
-  fisher = TRUE, conf.int = 0.95)
+partial_Spearman(
+  formula,
+  data,
+  fit.x = "orm",
+  fit.y = "orm",
+  link.x = c("logit", "probit", "cloglog", "loglog", "cauchit", "logistic"),
+  link.y = c("logit", "probit", "cloglog", "loglog", "cauchit", "logistic"),
+  subset,
+  na.action = getOption("na.action"),
+  fisher = TRUE,
+  conf.int = 0.95
+)
 }
 \arguments{
 \item{formula}{an object of class \code{\link{Formula}} (or one

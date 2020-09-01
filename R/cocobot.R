@@ -21,8 +21,9 @@
 #' @references Li C and Shepherd BE (2012) 
 #' A new residual for ordinal outcomes.
 #' \emph{Biometrika}. \bold{99}: 473--480.
-#' @references Shepherd BE, Li C, Liu Q (submitted)
+#' @references Shepherd BE, Li C, Liu Q (2016)
 #' Probability-scale residuals for continuous, discrete, and censored data.
+#' \emph{The Canadian Journal of Statistics}. \bold{44}: 463--479.
 #'
 
 #' @param formula an object of class \code{\link{Formula}} (or one
