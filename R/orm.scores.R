@@ -42,9 +42,11 @@ orm.scores <- function (y, X, link) {
     ### I am using orm() notation, orm model P(Y>=j+1), gamma=P(Y<=j)=1- F(alpha+sum(beta*x))
     ### It does not matter much for probit, logit, cauchy (with symetric pdf), but it does matter for loglog and cloglog
     ### Therefore,I modify the cocobot ordinal.scores code.
-    gamma <-1- mod$trans$cumprob(alpha + sum(beta*x))
+    gamma = 1- mod$trans$cumprob(alpha + sum(beta*x))
     diffgamma = diff(c(gamma,1))
+    diffgamma = ifelse(diffgamma<1e-16, 1e-16, diffgamma)
     invgamma = 1/gamma
+    invgamma = ifelse(invgamma==Inf, 1e16, invgamma)
     invgamma2 = invgamma^2
     invdiffgamma = 1/diffgamma
     invdiffgamma2 = invdiffgamma^2

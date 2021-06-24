@@ -1,5 +1,6 @@
-199dc5f3d577d7f92239d2c7766d19ff *DESCRIPTION
+9b4174da4398159cf1ae8328f62c4bdf *DESCRIPTION
 a00753ce07fb2cd74646d86a1bde8000 *NAMESPACE
+7055a1aa58ddc1af66d365ae63010adc *NEWS.md
 756a7052afbd81dacc9e4502f29713e9 *R/GKGamma.R
 d88a720e9e86e77cfa7f5bc4a4cfaacd *R/PResidData.R
 bdcbb5ad9e6cd6568e0465e9f6f430e7 *R/PResiduals-package.R
@@ -17,7 +18,7 @@ dca605293961cc14188bdc6836151cfc *R/lm.scores.R
 c00808bb1ee4383fdf672efaa247239f *R/megabot.R
 c74e26f3a209509ceb17df5fdfd4c4f1 *R/nb.scores.R
 c3ca4cfba0b6eb64c2892846249ce052 *R/newPolr.R
-9af936248089e97f090b78ee3591c2b8 *R/orm.scores.R
+6f0a62a6763cb1409ba2416fb529aa20 *R/orm.scores.R
 88a275687cacd8c60b958dcfc72b8a67 *R/partial_Spearman.R
 b66c832608af2ffbe9753c6cf59bee50 *R/pgumbel.R
 eb366757e9686e9a8cf91f49e0b678af *R/plot.conditional_Spearman.R
