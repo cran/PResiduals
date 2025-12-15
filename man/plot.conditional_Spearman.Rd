@@ -11,6 +11,9 @@
 
 \item{...}{arguments passed to plot.default}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 conditional_Spearman class plot method
 }

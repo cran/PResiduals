@@ -1,65 +1,107 @@
 #'  Conditional Partial Spearman's Rank Correlation
 #'
-#' \code{conditional_Spearman} computes the partial Spearman's rank correlation between variable \var{X} and variable \var{Y} adjusting for variable \var{Z} conditional on \var{Zc}.
-#' \var{X} and \var{Y} can be any orderable variables, including continuous and discrete variables. Covariate \var{Z} can be multidimensional. \var{X}, \var{Y}, and \var{Z} are specified by the argument \samp{formula}.
-#' \var{Zc} is a one-dimensional covariate, specified by the argument \samp{conditional.by}.
-#' The basic approach involves fitting a specified model of \var{X} on \var{Z}, a specified model of \var{Y} on \var{Z}, obtaining the probability-scale residuals, \var{Xres} and \var{Yres}, from both models, and then modeling their Pearson's correlation conditional on \var{Zc}.
-#' Different methods are provided to model the Pearson's correlation between the two sets of probability-scale residuals. See details in \samp{conditional.method}.
-#' As in \samp{partial.Spearman}, by default \code{conditional_Spearman} uses cumulative link models for both continous and discrete ordinal variables \var{X} and \var{Y} to preserve the rank-based nature of Spearman's correlation. For some specific types of variables, options of fitting parametric models are also available. See details in \samp{fit.x} and \samp{fit.y}.
+#' \code{conditional_Spearman} computes the partial Spearman's rank
+#' correlation between variable \var{X} and variable \var{Y} adjusting for
+#' variable \var{Z} conditional on \var{Zc}.  \var{X} and \var{Y} can be any
+#' orderable variables, including continuous and discrete
+#' variables. Covariate \var{Z} can be multidimensional. \var{X}, \var{Y},
+#' and \var{Z} are specified by the argument \samp{formula}.  \var{Zc} is a
+#' one-dimensional covariate, specified by the argument
+#' \samp{conditional.by}.  The basic approach involves fitting a specified
+#' model of \var{X} on \var{Z}, a specified model of \var{Y} on \var{Z},
+#' obtaining the probability-scale residuals, \var{Xres} and \var{Yres}, from
+#' both models, and then modeling their Pearson's correlation conditional on
+#' \var{Zc}.  Different methods are provided to model the Pearson's
+#' correlation between the two sets of probability-scale residuals. See
+#' details in \samp{conditional.method}.  As in \samp{partial.Spearman}, by
+#' default \code{conditional_Spearman} uses cumulative link models for both
+#' continous and discrete ordinal variables \var{X} and \var{Y} to preserve
+#' the rank-based nature of Spearman's correlation. For some specific types
+#' of variables, options of fitting parametric models are also available. See
+#' details in \samp{fit.x} and \samp{fit.y}.
 #'
 #'
-#' To compute the partial Spearman's rank correlation between \var{X} and \var{Y} adjusting for \var{Z} conditional on \var{Zc}, \samp{formula} is specified as \code{\var{X} | \var{Y} ~ \var{Z}} and \samp{conditional.by} is specified as \var{Zc}.
-#' This indicates that models of \code{\var{X} ~ \var{Z}} and \code{\var{Y} ~ \var{Z}} will be fit, and the correlation between the probability-scale residuals from these two models will be modeled conditional on \var{Zc}.
-
-#' @references Li C and Shepherd BE (2012)
-#' A new residual for ordinal outcomes.
-#' \emph{Biometrika}. \bold{99}: 473--480.
-#' @references Shepherd BE, Li C, Liu Q (2016)
-#' Probability-scale residuals for continuous, discrete, and censored data.
-#' \emph{The Canadian Jouranl of Statistics}. \bold{44}:463--476.
-#' @references Liu Q, Shepherd BE, Wanga V, Li C (2018)
-#' Covariate-Adjusted Spearman's Rank Correlation with Probability-Scale Residuals.
-#' \emph{Biometrics}. \bold{74}:595--605.
+#' To compute the partial Spearman's rank correlation between \var{X} and
+#' \var{Y} adjusting for \var{Z} conditional on \var{Zc}, \samp{formula} is
+#' specified as \code{\var{X} | \var{Y} ~ \var{Z}} and \samp{conditional.by}
+#' is specified as \var{Zc}.  This indicates that models of \code{\var{X} ~
+#' \var{Z}} and \code{\var{Y} ~ \var{Z}} will be fit, and the correlation
+#' between the probability-scale residuals from these two models will be
+#' modeled conditional on \var{Zc}.
 #'
-#' @param formula an object of class \code{\link{Formula}} (or one
-#' that can be coerced to that class): a symbolic description of the
-#' model to be fitted.  The details of model specification are given
-#' under \sQuote{Details}.
+#' @references Li C and Shepherd BE (2012) A new residual for ordinal
+#'     outcomes.  \emph{Biometrika}. \bold{99}: 473--480.
+#' @references Shepherd BE, Li C, Liu Q (2016) Probability-scale residuals
+#'     for continuous, discrete, and censored data.  \emph{The Canadian
+#'     Jouranl of Statistics}. \bold{44}:463--476.
+#' @references Liu Q, Shepherd BE, Wanga V, Li C (2018) Covariate-Adjusted
+#'     Spearman's Rank Correlation with Probability-Scale Residuals.
+#'     \emph{Biometrics}. \bold{74}:595--605.
 #'
-#' @param conditional.by the name of the variable on which the partial Spearman's correlation is conditional. See \sQuote{Details}.
+#' @param formula an object of class \code{\link[Formula]{Formula}} (or
+#'     one that can be coerced to that class): a symbolic description of the
+#'     model to be fitted.  The details of model specification are given
+#'     under \sQuote{Details}.
 #'
-#' @param conditional.method the method to be used for modeling conditional correlation between probability-scale residuals. The default option is \samp{lm}, which fits linear regression models for \var{Xres}\var{Yres} on \var{Zc}, \var{Xres^2} on \var{Zc}, and \var{Yres^2} on \var{Zc}, and then uses the fitted values to compute the Pearson's correlation between \var{Xres} and \var{Yres} conditional on \var{Zc}.
-#' Other options include \samp{kernel}, which computes correlation between \var{Xres} and \var{Yres} conditional on \var{Zc} using a kernel weighted method, and \samp{stratification}, which computes the correlation between \var{Xres} and \var{Yres} seperately for each value of \var{Zc}.
+#' @param conditional.by the name of the variable on which the partial
+#'     Spearman's correlation is conditional. See \sQuote{Details}.
 #'
-#' @param conditional.formula the formula to be used when \samp{conditional.method} is specified as \samp{lm}.
+#' @param conditional.method the method to be used for modeling conditional
+#'     correlation between probability-scale residuals. The default option is
+#'     \samp{lm}, which fits linear regression models for
+#'     \var{Xres}\var{Yres} on \var{Zc}, \var{Xres^2} on \var{Zc}, and
+#'     \var{Yres^2} on \var{Zc}, and then uses the fitted values to compute
+#'     the Pearson's correlation between \var{Xres} and \var{Yres}
+#'     conditional on \var{Zc}.  Other options include \samp{kernel}, which
+#'     computes correlation between \var{Xres} and \var{Yres} conditional on
+#'     \var{Zc} using a kernel weighted method, and \samp{stratification},
+#'     which computes the correlation between \var{Xres} and \var{Yres}
+#'     seperately for each value of \var{Zc}.
 #'
-#' @param kernel.function the kernel function to be used when \samp{conditional.method} is specified as \samp{kernel}. Defaults to \samp{normal}. Other options are \samp{triweight}, \samp{quartic}, \samp{biweight}, \samp{epanechnikov}, \samp{uniform}, and \samp{triangle}.
+#' @param conditional.formula the formula to be used when
+#'     \samp{conditional.method} is specified as \samp{lm}.
 #'
-#' @param kernel.bandwidth the kernel bandwidth to be used when \samp{conditional.method} is specified as \samp{kernel}. The default value is calculated using Silverman' rule. Users can also specify a positive numeric value.
+#' @param kernel.function the kernel function to be used when
+#'     \samp{conditional.method} is specified as \samp{kernel}. Defaults to
+#'     \samp{normal}. Other options are \samp{triweight}, \samp{quartic},
+#'     \samp{biweight}, \samp{epanechnikov}, \samp{uniform}, and
+#'     \samp{triangle}.
 #'
-#' @param fit.x,fit.y the fitting functions used for the model of \var{X} or \var{Y} on
-#' \var{Z}.  The default function is \samp{orm}, which fits cumulative link models for continuous or discrete ordinal variables. Other options include \samp{lm} (fit linear regression models and obtain the probability-scale residuals by assuming normality),
-#' \samp{lm.emp} (fit linear regression and obtain the probability-scale residuals by empirical ranking),
-#' \samp{poisson} (fit Poisson models for count variables), \samp{nb} (fit negative binomial models for count variables), and \samp{logistic} (fit logistic regression models for binary variables).
+#' @param kernel.bandwidth the kernel bandwidth to be used when
+#'     \samp{conditional.method} is specified as \samp{kernel}. The default
+#'     value is calculated using Silverman' rule. Users can also specify a
+#'     positive numeric value.
+#'
+#' @param fit.x,fit.y the fitting functions used for the model of \var{X} or
+#'     \var{Y} on \var{Z}.  The default function is \samp{orm}, which fits
+#'     cumulative link models for continuous or discrete ordinal
+#'     variables. Other options include \samp{lm} (fit linear regression
+#'     models and obtain the probability-scale residuals by assuming
+#'     normality), \samp{lm.emp} (fit linear regression and obtain the
+#'     probability-scale residuals by empirical ranking), \samp{poisson} (fit
+#'     Poisson models for count variables), \samp{nb} (fit negative binomial
+#'     models for count variables), and \samp{logistic} (fit logistic
+#'     regression models for binary variables).
 #'
 #' @param link.x,link.y the link family to be used for the ordinal model of
-#' \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
-#' \samp{probit}, \samp{cloglog}, \samp{cauchit}, and \samp{logistic} (equivalent with \samp{logit}). Used only when
-#' \samp{fit.x} is \samp{orm}.
+#'     \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
+#'     \samp{probit}, \samp{cloglog}, \samp{cauchit}, and \samp{logistic}
+#'     (equivalent with \samp{logit}). Used only when \samp{fit.x} is
+#'     \samp{orm}.
 #'
 #' @param data an optional data frame, list or environment (or object
-#' coercible by \code{\link{as.data.frame}} to a data frame)
-#' containing the variables in the model.  If not found in
-#' \code{data}, the variables are taken from
-#' \code{environment(formula)}, typically the environment from which
-#' \code{conditional_Spearman} is called.
+#'     coercible by \code{\link{as.data.frame}} to a data frame) containing
+#'     the variables in the model.  If not found in \code{data}, the
+#'     variables are taken from \code{environment(formula)}, typically the
+#'     environment from which \code{conditional_Spearman} is called.
 #'
-#' @param subset an optional vector specifying a subset of
-#' observations to be used in the fitting process.
+#' @param subset an optional vector specifying a subset of observations to be
+#'     used in the fitting process.
 #'
 #' @param na.action action to take when \code{NA} present in data.
 #'
-#' @param fisher logical indicating whether to apply fisher transformation to compute confidence intervals and p-values for the correlation.
+#' @param fisher logical indicating whether to apply fisher transformation to
+#'     compute confidence intervals and p-values for the correlation.
 #'
 #' @param conf.int numeric specifying confidence interval coverage.
 #'
@@ -310,7 +352,7 @@ conditional_Spearman <- function(formula, conditional.by, data,
                      kernel.function=kernel.function[1],
                      kernel.bandwidth=h)
     }else if (conditional.method[1]=="stratification"){
-      if(class(data[, conditional.by])=="character" ) data[, conditional.by]=factor(data[, conditional.by])
+      if(inherits(data[, conditional.by], "character")) data[, conditional.by]=factor(data[, conditional.by])
 
       if(is.null(levels(data[,conditional.by]))){
         stop("Please make sure the conditional.by variable is a factor if using stratification for conditional.method")

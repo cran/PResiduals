@@ -1,11 +1,25 @@
 Package: PResiduals
 Type: Package
 Title: Probability-Scale Residuals and Residual Correlations
-Version: 1.0-1
-Author: Charles Dupont, Jeffrey Horner, Chun Li, Qi Liu, Bryan Shepherd
+Version: 1.0-2
+Authors@R: c(person(given = "Charles",
+                    family = "Dupont",
+                    role = "aut"),
+             person(given = "Jeffrey",
+                    family = "Horner",
+                    role = "aut"),
+             person(given = "Chun",
+                    family = "Li",
+                    role = c("aut", "cre"),
+                    email = "cli77199@usc.edu"),
+             person(given = "Qi",
+                    family = "Liu",
+                    role = "aut"),
+             person(given = "Bryan",
+                    family = "Shepherd",
+                    role = "aut"))
 Maintainer: Chun Li <cli77199@usc.edu>
-Description: Computes probability-scale residuals and residual correlations
-    for continuous, ordinal, binary, count, and time-to-event data <doi:10.18637/jss.v094.i12>.
+Description: Computes probability-scale residuals and residual correlations for continuous, ordinal, binary, count, and time-to-event data Qi Liu, Bryan Shepherd, Chun Li (2020) <doi:10.18637/jss.v094.i12>.
 Imports: MASS, Formula, rms, SparseM,
 Suggests: survival, testthat
 License: GPL (>= 2)
@@ -20,7 +34,12 @@ Collate: 'GKGamma.R' 'PResidData.R' 'PResiduals-package.R' 'pgumbel.R'
         'print.cobot.R' 'print.cocobot.R'
         'print.conditional_Spearman.R' 'print.partial_Spearman.R'
 NeedsCompilation: no
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.3
 Repository: CRAN
-Packaged: 2021-06-24 02:59:20 UTC; lic3
-Date/Publication: 2021-06-24 06:40:05 UTC
+Packaged: 2025-12-10 06:19:32 UTC; lic3
+Date/Publication: 2025-12-15 20:20:02 UTC
+Author: Charles Dupont [aut],
+  Jeffrey Horner [aut],
+  Chun Li [aut, cre],
+  Qi Liu [aut],
+  Bryan Shepherd [aut]

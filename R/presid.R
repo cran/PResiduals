@@ -308,25 +308,28 @@ presid.default <- function(object, ...) {
 #' \code{presid} calculates the probability-scale residual for various model
 #' function objects. Currently supported models include \code{\link{glm}}
 #' (Poisson, binomial, and gaussian families), \code{\link{lm}} in the
-#' \pkg{stats} library; \code{\link{survreg}} (Weibull, exponential, gaussian,
-#' logistic, and lognormal distributions) and \code{\link{coxph}} in the
-#' \pkg{survival} library; \code{\link{polr}} and \code{\link{glm.nb}} in
-#' the \pkg{MASS} library; and \code{\link{ols}}, \code{\link{cph}},
-#' \code{\link{lrm}}, \code{\link{orm}}, \code{\link{psm}}, and \code{\link{Glm}}
-#' in the \pkg{rms} library.
+#' \pkg{stats} library; \code{\link[survival]{survreg}} (Weibull,
+#' exponential, gaussian, logistic, and lognormal distributions) and
+#' \code{\link[survival]{coxph}} in the \pkg{survival} library;
+#' \code{\link[MASS]{polr}} and \code{\link[MASS]{glm.nb}} in the \pkg{MASS}
+#' library; and \code{\link[rms]{ols}}, \code{\link[rms]{cph}},
+#' \code{\link[rms]{lrm}}, \code{\link[rms]{orm}}, \code{\link[rms]{psm}},
+#' and \code{\link[rms]{Glm}} in the \pkg{rms} library.
 #'
-#' Probability-scale residual is \eqn{P(Y < y) - P(Y > y)} where \eqn{y} is the observed
-#' outcome and \eqn{Y} is a random variable from the fitted distribution.
+#' Probability-scale residual is \eqn{P(Y < y) - P(Y > y)} where \eqn{y} is
+#' the observed outcome and \eqn{Y} is a random variable from the fitted
+#' distribution.
 #'
-#' @param object The model object for which the probability-scale residual is calculated
+#' @param object The model object for which the probability-scale residual is
+#'     calculated
 #' @param ... Additional arguements passed to methods
 #' @return The probability-scale residual for the model
-#' @references Shepherd BE, Li C, Liu Q (2016)
-#' Probability-scale residuals for continuous, discrete, and censored data.
-#' \emph{The Canadian Jouranl of Statistics}. \bold{44}:463--476.
-#' @references Li C and Shepherd BE (2012)
-#' A new residual for ordinal outcomes.
-#' \emph{Biometrika}. \bold{99}: 473--480.
+#' @references Shepherd BE, Li C, Liu Q (2016) Probability-scale residuals
+#'     for continuous, discrete, and censored data.  \emph{The Canadian
+#'     Jouranl of Statistics}. \bold{44}:463--476.
+#' @references Li C and Shepherd BE (2012) A new residual for ordinal
+#'     outcomes.  \emph{Biometrika}. \bold{99}: 473--480.
+#' 
 #' @export
 #' @examples
 #' library(survival)
@@ -392,7 +395,7 @@ presid.default <- function(object, ...) {
 #' presid <- presid(mod.polr)
 #' summary(presid)
 #' plot(x, presid, cex=0.4)
+
 presid <- function(object, ...) {
     UseMethod('presid', object)
 }
-

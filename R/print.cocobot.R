@@ -2,6 +2,7 @@
 #' @method print cocobot
 #' @param x cocobot object
 #' @param ... arguments passed to print.default
+#' @return No return value, called for side effects
 #' @keywords print
 #' @export
 print.cocobot <- function(x, ...) {

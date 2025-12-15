@@ -1,28 +1,30 @@
 #' slightly modified version of polr from MASS
+#'
 #' @param formula a formula
 #' @param start initial values for the parameters.
-#' @param data an optional data frame, list or environment (or object coercible
-#' by \code{\link{as.data.frame}} to a data frame) containing the variables in
-#' the model.  If not found in \code{data}, the variables are taken from
-#' \code{environment(formula)}, typically the environment from which
-#' \code{cobot} is called.
+#' @param data an optional data frame, list or environment (or object
+#'     coercible by \code{\link{as.data.frame}} to a data frame) containing
+#'     the variables in the model.  If not found in \code{data}, the
+#'     variables are taken from \code{environment(formula)}, typically the
+#'     environment from which \code{cobot} is called.
 #' @param subset an optional vector specifying a subset of observations to be
-#' used in the fitting process.
+#'     used in the fitting process.
 #' @param weights optional case weights in fitting.  Default to 1.
-#' @param na.action a function which indicates what should happen when the data
-#' contain \code{NA}s.  The default is is \code{\link{na.fail}}.  Another
-#' possible value is \code{NULL}, no action.  Value \code{\link{na.exclude}} can
-#' be useful.
-#' @param contrasts     a list of contrasts to be used for some or all of the
-#' factors appearing as variables in the model formula.
-#' @param ...     additional arguments to be passed to \code{\link{optim}}, most
-#' often a \code{control} argument.
-#' @param Hess logical for whether the Hessian (the observed information matrix)
-#' should be returned.  Use this if you intend to call \code{\link{summary}} or
-#' \code{\link{vcov}} on the fit.
+#' @param na.action a function which indicates what should happen when the
+#'     data contain \code{NA}s.  The default is is \code{\link{na.fail}}.
+#'     Another possible value is \code{NULL}, no action.  Value
+#'     \code{\link{na.exclude}} can be useful.
+#' @param contrasts a list of contrasts to be used for some or all of the
+#'     factors appearing as variables in the model formula.
+#' @param ...  additional arguments to be passed to \code{\link{optim}}, most
+#'     often a \code{control} argument.
+#' @param Hess logical for whether the Hessian (the observed information
+#'     matrix) should be returned.  Use this if you intend to call
+#'     \code{\link{summary}} or \code{\link{vcov}} on the fit.
 #' @param model logical for whether the model matrix should be returned.
-#' @param method logistic or probit or complementary log-log, loglog,  or cauchit
-#' (corresponding to a Cauchy latent variable).
+#' @param method logistic or probit or complementary log-log, loglog, or
+#'     cauchit (corresponding to a Cauchy latent variable).
+#' 
 #' @return   A object of class \code{"polr"}.  This has components
 #' \item{coefficients}{the coefficients of the linear predictor, which has no
 #' intercept.}
@@ -35,7 +37,7 @@
 #' using the weights.}
 #' \item{edf}{the (effective) number of degrees of freedom used by the model}
 #' \item{n, nobs}{the (effective) number of observations, calculated using the
-#' weights. (\code{nobs} is for use by \code{\link{stepAIC}}).}
+#' weights. (\code{nobs} is for use by \code{\link[MASS]{stepAIC}}).}
 #' \item{call}{the matched call.}
 #' \item{method}{the matched method used.}
 #' \item{convergence}{the convergence code returned by \code{optim}.}
@@ -45,10 +47,12 @@
 #' \item{Hessian}{(if \code{Hess} is true).  Note that this is a numerical
 #' approximation derived from the optimization proces.}
 #' \item{model}{(if \code{model} is true).}
-#' @references
-#' polr from MASS
-#' @seealso \code{\link{optim}}, \code{\link{glm}}, \code{\link[nnet]{multinom}}
-#' @importFrom stats model.weights model.offset model.response glm.fit .getXlevels binomial
+#' 
+#' @references polr from MASS
+#' @seealso \code{\link{optim}}, \code{\link{glm}},
+#'     \code{\link[nnet]{multinom}}
+#' @importFrom stats model.weights model.offset model.response glm.fit
+#'     .getXlevels binomial
 
 
 newpolr <- function(formula, data, weights, start, ..., subset,

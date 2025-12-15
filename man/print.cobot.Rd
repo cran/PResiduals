@@ -11,6 +11,9 @@
 
 \item{...}{arguments passed to print.default}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 cobot class print method
 }

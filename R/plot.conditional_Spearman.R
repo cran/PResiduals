@@ -2,6 +2,7 @@
 #' @method plot conditional_Spearman
 #' @param x conditional_Spearman object
 #' @param ... arguments passed to plot.default
+#' @return No return value, called for side effects
 #' @keywords plot
 #' @export
 #' @importFrom graphics axis box lines plot points polygon segments

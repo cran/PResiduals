@@ -2,6 +2,7 @@
 #' @method print partial_Spearman
 #' @param x partial_Spearman object
 #' @param ... arguments passed to print.default
+#' @return No return value, called for side effects
 #' @keywords print
 #' @export
 print.partial_Spearman <- function(x, ...) {

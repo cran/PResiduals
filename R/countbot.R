@@ -1,57 +1,59 @@
 #' Conditional count by ordinal tests for association.
 #'
 #' \code{countbot} tests for independence between an ordered categorical
-#' variable, \var{X}, and a count variable, \var{Y}, conditional on other variables,
-#' \var{Z}.  The basic approach involves fitting an ordinal model of \var{X} on
-#' \var{Z}, a Poisson or Negative Binomial model of \var{Y} on \var{Z}, and then determining whether there is any
-#' residual information between \var{X} and \var{Y}.  This is done by
-#' computing residuals for both models, calculating their correlation, and 
-#' testing the null of no residual correlation.  This procedure is analogous to test statistic 
-#' \code{T2} in \code{cobot}.  Two test statistics (correlations) are currently output.  The first
-#' is the correlation between probability-scale residuals. The second is the correlation between 
-#' the Pearson residual for the count outcome model and a latent variable residual
-#' for the ordinal model (Li C and Shepherd BE, 2012).
-
+#' variable, \var{X}, and a count variable, \var{Y}, conditional on other
+#' variables, \var{Z}.  The basic approach involves fitting an ordinal model
+#' of \var{X} on \var{Z}, a Poisson or Negative Binomial model of \var{Y} on
+#' \var{Z}, and then determining whether there is any residual information
+#' between \var{X} and \var{Y}.  This is done by computing residuals for both
+#' models, calculating their correlation, and testing the null of no residual
+#' correlation.  This procedure is analogous to test statistic \code{T2} in
+#' \code{cobot}.  Two test statistics (correlations) are currently output.
+#' The first is the correlation between probability-scale residuals. The
+#' second is the correlation between the Pearson residual for the count
+#' outcome model and a latent variable residual for the ordinal model (Li C
+#' and Shepherd BE, 2012).
 #'
-#' Formula is specified as \code{\var{X} | \var{Y} ~ \var{Z}}.
-#' This indicates that models of \code{\var{X} ~ \var{Z}} and
-#' \code{\var{Y} ~ \var{Z}} will be fit.  The null hypothesis to be
-#' tested is \eqn{H_0 : X}{H0 : X} independent of \var{Y} conditional
-#' on \var{Z}.  The ordinal variable, \code{\var{X}}, must precede the \code{|} and be a factor variable, and \code{\var{Y}} must be an integer.
-#' @references Li C and Shepherd BE (2012) 
-#' A new residual for ordinal outcomes.
-#' \emph{Biometrika}. \bold{99}: 473--480.
-#' @references Shepherd BE, Li C, Liu Q (2016)
-#' Probability-scale residuals for continuous, discrete, and censored data.
-#' \emph{The Canadian Journal of Statistics}. \bold{44}: 463--479.
-
+#' Formula is specified as \code{\var{X} | \var{Y} ~ \var{Z}}.  This
+#' indicates that models of \code{\var{X} ~ \var{Z}} and \code{\var{Y} ~
+#' \var{Z}} will be fit.  The null hypothesis to be tested is \eqn{H_0 :
+#' X}{H0 : X} independent of \var{Y} conditional on \var{Z}.  The ordinal
+#' variable, \code{\var{X}}, must precede the \code{|} and be a factor
+#' variable, and \code{\var{Y}} must be an integer.
+#' 
+#' @references Li C and Shepherd BE (2012) A new residual for ordinal
+#'     outcomes.  \emph{Biometrika}. \bold{99}: 473--480.
+#' @references Shepherd BE, Li C, Liu Q (2016) Probability-scale residuals
+#'     for continuous, discrete, and censored data.  \emph{The Canadian
+#'     Journal of Statistics}. \bold{44}: 463--479.
 #'
-#' @param formula an object of class \code{\link{Formula}} (or one
-#' that can be coerced to that class): a symbolic description of the
-#' model to be fitted.  The details of model specification are given
-#' under \sQuote{Details}.
+#' @param formula an object of class \code{\link[Formula]{Formula}} (or
+#'     one that can be coerced to that class): a symbolic description of the
+#'     model to be fitted.  The details of model specification are given
+#'     under \sQuote{Details}.
 #'
 #' @param data an optional data frame, list or environment (or object
-#' coercible by \code{\link{as.data.frame}} to a data frame)
-#' containing the variables in the model.  If not found in
-#' \code{data}, the variables are taken from
-#' \code{environment(formula)}, typically the environment from which
-#' \code{countbot} is called.
-
-#' @param link.x The link family to be used for the ordinal model of 
-#' \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
-#' \samp{probit}, \samp{cloglog},\samp{loglog}, and \samp{cauchit}.
+#'     coercible by \code{\link{as.data.frame}} to a data frame) containing
+#'     the variables in the model.  If not found in \code{data}, the
+#'     variables are taken from \code{environment(formula)}, typically the
+#'     environment from which \code{countbot} is called.
+#'
+#' @param link.x The link family to be used for the ordinal model of \var{X}
+#'     on \var{Z}.  Defaults to \samp{logit}. Other options are
+#'     \samp{probit}, \samp{cloglog},\samp{loglog}, and \samp{cauchit}.
 #' 
-#' @param fit.y The error distribution for the count model of \var{Y} on \var{Z}.
-#' Defaults to \samp{poisson}. The other option is \samp{negative binomial}. 
-#' If \samp{negative binomial} is specified, \code{\link[MASS]{glm.nb}} is called to fit the count model.
-
-#' @param subset an optional vector specifying a subset of
-#' observations to be used in the fitting process.
+#' @param fit.y The error distribution for the count model of \var{Y} on
+#'     \var{Z}.  Defaults to \samp{poisson}. The other option is
+#'     \samp{negative binomial}.  If \samp{negative binomial} is specified,
+#'     \code{\link[MASS]{glm.nb}} is called to fit the count model.
+#'
+#' @param subset an optional vector specifying a subset of observations to be
+#'     used in the fitting process.
 #' 
 #' @param na.action action to take when \code{NA} present in data.
 #' 
-#' @param fisher logical indicating whether to apply fisher transformation to compute confidence intervals and p-values for the correlation.
+#' @param fisher logical indicating whether to apply fisher transformation to
+#'     compute confidence intervals and p-values for the correlation.
 #' 
 #' @param conf.int numeric specifying confidence interval coverage.
 #' 
@@ -62,8 +64,6 @@
 #' data(PResidData)
 #' countbot(x|c ~z, fit.y="poisson",data=PResidData)
 #' countbot(x|c ~z, fit.y="negative binomial",data=PResidData)
-
-
 
 
 countbot <- function(formula, data, link.x=c("logit", "probit","loglog", "cloglog", "cauchit"),

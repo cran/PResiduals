@@ -16,5 +16,4 @@
 #' @author Charles Dupont \email{charles.dupont@@vanderbilt.edu}
 #' @author Jeffrey Horner \email{jeffrey.horner@@vanderbilt.edu}
 #' @keywords package
-#' @docType package
-NULL
+"_PACKAGE"

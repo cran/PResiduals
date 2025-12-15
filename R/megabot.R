@@ -1,55 +1,56 @@
-#'  Conditional tests for association.
+#' Conditional tests for association.
 #' 
-#' \code{megabot} tests for correlation between a variable, \var{X}, and another variable, \var{Y},
-#' conditional on other variables, \var{Z}.  The basic approach involves fitting an specified model of \var{X} on
-#' \var{Z}, a specified model of \var{Y} on \var{Z}, and then determining whether there is any
-#' remaining information between \var{X} and \var{Y}.  This is done by
-#' computing residuals for both models, calculating their correlation, and 
-#' testing the null of no residual correlation.  The test statistic output 
-#' is the correlation between probability-scale residuals.  \var{X} and \var{Y} can
-#' be continous or ordered discrete variables.  \code{megabot} replicates the functionality
-#' of \code{\link{cobot}}, \code{\link{cocobot}}, and \code{\link{countbot}}
+#' \code{megabot} tests for correlation between a variable, \var{X}, and
+#' another variable, \var{Y}, conditional on other variables, \var{Z}.  The
+#' basic approach involves fitting an specified model of \var{X} on \var{Z},
+#' a specified model of \var{Y} on \var{Z}, and then determining whether
+#' there is any remaining information between \var{X} and \var{Y}.  This is
+#' done by computing residuals for both models, calculating their
+#' correlation, and testing the null of no residual correlation.  The test
+#' statistic output is the correlation between probability-scale residuals.
+#' \var{X} and \var{Y} can be continous or ordered discrete variables.
+#' \code{megabot} replicates the functionality of \code{\link{cobot}},
+#' \code{\link{cocobot}}, and \code{\link{countbot}}
 #' 
-#' Formula is specified as \code{\var{X} | \var{Y} ~ \var{Z}}.
-#' This indicates that models of \code{\var{X} ~ \var{Z}} and
-#' \code{\var{Y} ~ \var{Z}} will be fit.  The null hypothesis to be
-#' tested is \eqn{H_0 : X}{H0 : X} independent of \var{Y} conditional
-#' on \var{Z}.
+#' Formula is specified as \code{\var{X} | \var{Y} ~ \var{Z}}.  This
+#' indicates that models of \code{\var{X} ~ \var{Z}} and \code{\var{Y} ~
+#' \var{Z}} will be fit.  The null hypothesis to be tested is \eqn{H_0 :
+#' X}{H0 : X} independent of \var{Y} conditional on \var{Z}.
 #'  
-#' @references Li C and Shepherd BE (2012) 
-#' A new residual for ordinal outcomes.
-#' \emph{Biometrika}. \bold{99}: 473--480.
-#' @references Shepherd BE, Li C, Liu Q (2016)
-#' Probability-scale residuals for continuous, discrete, and censored data.
-#' \emph{The Canadian Journal of Statistics}. \bold{44}: 463--479.
+#' @references Li C and Shepherd BE (2012) A new residual for ordinal
+#'     outcomes.  \emph{Biometrika}. \bold{99}: 473--480.
+#' @references Shepherd BE, Li C, Liu Q (2016) Probability-scale residuals
+#'     for continuous, discrete, and censored data.  \emph{The Canadian
+#'     Journal of Statistics}. \bold{44}: 463--479.
 #'
-#' @param formula an object of class \code{\link{Formula}} (or one
-#' that can be coerced to that class): a symbolic description of the
-#' model to be fitted.  The details of model specification are given
-#' under \sQuote{Details}.
+#' @param formula an object of class \code{\link[Formula]{Formula}} (or
+#'     one that can be coerced to that class): a symbolic description of the
+#'     model to be fitted.  The details of model specification are given
+#'     under \sQuote{Details}.
 #'
-#' @param fit.x,fit.y The fitting function used for the model of \var{X} or \var{Y} on
-#' \var{Z}.  Options are \samp{ordinal}, \samp{lm}, \samp{lm.emp},
-#' \samp{poisson}, \samp{nb}, and \samp{orm}.
+#' @param fit.x,fit.y The fitting function used for the model of \var{X} or
+#'     \var{Y} on \var{Z}.  Options are \samp{ordinal}, \samp{lm},
+#'     \samp{lm.emp}, \samp{poisson}, \samp{nb}, and \samp{orm}.
 #' 
-#' @param link.x,link.y The link family to be used for the ordinal model of 
-#' \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
-#' \samp{probit}, \samp{cloglog},\samp{loglog}, \samp{cauchit}, and \samp{logistic}(equivalent with \samp{logit}). Used only when
-#' \samp{fit.x} is either \samp{ordinal} or \samp{orm}.
+#' @param link.x,link.y The link family to be used for the ordinal model of
+#'     \var{X} on \var{Z}.  Defaults to \samp{logit}. Other options are
+#'     \samp{probit}, \samp{cloglog},\samp{loglog}, \samp{cauchit}, and
+#'     \samp{logistic}(equivalent with \samp{logit}). Used only when
+#'     \samp{fit.x} is either \samp{ordinal} or \samp{orm}.
 #' 
 #' @param data an optional data frame, list or environment (or object
-#' coercible by \code{\link{as.data.frame}} to a data frame)
-#' containing the variables in the model.  If not found in
-#' \code{data}, the variables are taken from
-#' \code{environment(formula)}, typically the environment from which
-#' \code{megabot} is called.
+#'     coercible by \code{\link{as.data.frame}} to a data frame) containing
+#'     the variables in the model.  If not found in \code{data}, the
+#'     variables are taken from \code{environment(formula)}, typically the
+#'     environment from which \code{megabot} is called.
 #' 
-#' @param subset an optional vector specifying a subset of
-#' observations to be used in the fitting process.
+#' @param subset an optional vector specifying a subset of observations to be
+#'     used in the fitting process.
 #' 
 #' @param na.action action to take when \code{NA} present in data.
 #' 
-#' @param fisher logical indicating whether to apply fisher transformation to compute confidence intervals and p-values for the correlation.
+#' @param fisher logical indicating whether to apply fisher transformation to
+#'     compute confidence intervals and p-values for the correlation.
 #' 
 #' @param conf.int numeric specifying confidence interval coverage.
 #' 

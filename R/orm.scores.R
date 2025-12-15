@@ -1,6 +1,7 @@
 ######
 #' @importFrom SparseM as.matrix
 #' @importFrom rms orm
+#' @importFrom rms infoMxop
 
 orm.scores <- function (y, X, link) {
   y <- as.numeric(factor(y))
@@ -42,7 +43,9 @@ orm.scores <- function (y, X, link) {
     ### I am using orm() notation, orm model P(Y>=j+1), gamma=P(Y<=j)=1- F(alpha+sum(beta*x))
     ### It does not matter much for probit, logit, cauchy (with symetric pdf), but it does matter for loglog and cloglog
     ### Therefore,I modify the cocobot ordinal.scores code.
-    gamma = 1- mod$trans$cumprob(alpha + sum(beta*x))
+    
+    gamma = 1- eval(mod$famfunctions[1])(alpha + sum(beta*x))
+    
     diffgamma = diff(c(gamma,1))
     diffgamma = ifelse(diffgamma<1e-16, 1e-16, diffgamma)
     invgamma = 1/gamma
@@ -69,8 +72,9 @@ orm.scores <- function (y, X, link) {
       dphi.dgamma[cbind(1:(na-1), 2:na)] = -invdiffgamma[-na]
     
     
-    dgamma.base <- - mod$trans$deriv(x=alpha + sum(beta*x), f=mod$trans$cumprob(alpha + sum(beta*x)))
+    dgamma.base <- - eval(mod$famfunctions[3])(x=alpha + sum(beta*x), f= eval(mod$famfunctions[1])(alpha + sum(beta*x))) ##good
     
+  
     dgamma.dalpha = diagn(dgamma.base)
     dgamma.dbeta = dgamma.base %o% x
     #dgamma.dtheta[i,,] = cbind(dgamma.dalpha, dgamma.dbeta)
@@ -97,7 +101,7 @@ orm.scores <- function (y, X, link) {
     
     
     
-    
+  
     
     
     ######################### use orm information matrix directly
@@ -226,13 +230,17 @@ orm.scores <- function (y, X, link) {
   #     cbind(t(d2l.dalpha.dbeta), d2l.dbeta.dbeta))
   #   
   
+
   low = cbind(0, Gamma)[cbind(1:N, y)]
   hi = cbind(1-Gamma, 0)[cbind(1:N, y)]
   presid <- low - hi
   dpresid.dtheta <- dlow.dtheta - dhi.dtheta
   
+
+#########  
+  
   result <- list(dl.dtheta=dl.dtheta,
-                 d2l.dtheta.dtheta =-as.matrix(mod$info.matrix),
+                 d2l.dtheta.dtheta = -as.matrix(infoMxop(mod$info, invert=FALSE)), 
                  presid=presid,
                  dpresid.dtheta = dpresid.dtheta )
   
